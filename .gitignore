@@ -5,3 +5,4 @@ __pycache__/
 output/
 *.egg-info/
 .env
+search_results.txt
