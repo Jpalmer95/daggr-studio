@@ -120,6 +120,7 @@ def main() -> int:
     print(f"\n{stage}  {url}")
     if stage in ("RUNNING", "RUNNING_BUILDING"):
         host = url.replace("huggingface.co/spaces/", "").replace("/", "-") + ".hf.space"
+        host = host.replace("https://", "")
         print(f"  app: https://{host}")
         print(f"  builder: https://{host}/builder")
         print(f"  health: https://{host}/healthz")

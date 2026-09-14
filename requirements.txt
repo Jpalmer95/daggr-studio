@@ -14,4 +14,4 @@ networkx>=3.0
 
 # pytest is present so the Space can self-check (`python -m pytest -q`) in the container;
 # it is small and makes debugging a deployed Space far easier.
-pytest>=8.0.0
+pytest>=8.0.0pytest-asyncio>=1.0.0

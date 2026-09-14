@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from fastapi import FastAPI  # noqa: E402
+from fastapi import FastAPI, Request  # noqa: E402
 from fastapi.responses import JSONResponse  # noqa: E402
 
 from daggrstudio.web.canvas import CANVAS  # noqa: E402
@@ -64,6 +64,68 @@ async def api_leaderboard(modality: str = "any", industry: str = "any",
 
     return JSONResponse(services.leaderboard_view(modality=modality, industry=industry,
                                                   license_filter=license_filter, sort=sort))
+
+
+@app.get("/api/canvas")
+async def api_canvas():
+    """Which workflow the canvas is currently showing, if any."""
+    return JSONResponse({"status": CANVAS.status, "ready": CANVAS.has_graph})
+
+
+@app.post("/api/plan")
+async def api_plan(request: Request):
+    """
+    Agent entry point: intent -> healed workflow.
+
+    Body: {"intent": str, "industry": str, "license_posture": str, "max_steps": int,
+           "model": str, "token": str, "heal_rounds": int}
+    The token is optional and used only for this request (BYOK); without it the Space's own
+    token is metered against the community pool. Tokens are never logged or stored.
+    """
+    from daggrstudio.web import services
+
+    payload = await _json_body(request)
+    intent = str(payload.get("intent") or payload.get("prompt") or "").strip()
+    if not intent:
+        return JSONResponse({"ok": False, "message": "provide an 'intent'"}, status_code=400)
+    result = services.plan_workflow(
+        intent,
+        token=payload.get("token") or None,
+        model=payload.get("model") or None,
+        industry=str(payload.get("industry") or "general"),
+        license_posture=str(payload.get("license_posture") or "commercial-only"),
+        max_steps=int(payload.get("max_steps") or 4),
+        live_validation=bool(payload.get("live_validation", True)),
+        heal_rounds=int(payload.get("heal_rounds") or 4),
+    )
+    # never echo anything that could carry a credential
+    result.pop("pool", None)
+    return JSONResponse(result, status_code=200 if result.get("ok") else 422)
+
+
+@app.post("/api/validate")
+async def api_validate(request: Request):
+    """Validate (and optionally heal) a spec posted by an agent."""
+    from daggrstudio.web import services
+
+    payload = await _json_body(request)
+    spec = payload.get("spec") or payload
+    if payload.get("heal"):
+        result = services.heal_spec(spec, token=payload.get("token") or None,
+                                    model=payload.get("model") or None,
+                                    live=bool(payload.get("live_validation", True)))
+    else:
+        result = services.validate_spec(spec, live=bool(payload.get("live_validation", True)),
+                                        token=payload.get("token") or None)
+    return JSONResponse(result, status_code=200 if result.get("ok") else 422)
+
+
+async def _json_body(request: Request) -> dict:
+    try:
+        payload = await request.json()
+        return payload if isinstance(payload, dict) else {}
+    except Exception:
+        return {}
 
 
 def _compose():

@@ -106,6 +106,29 @@ Evidence, not claims:
 * `DaggrServer(graph).app` is mountable; daggr's frontend uses **absolute** paths, hence the
   canvas owning `/` with the Builder at `/builder` (verified: both 200 in one process).
 
+### Deployed (live, verified over the public internet)
+
+* Space: **https://jkorstad-daggr-studio.hf.space** (Builder at `/builder`, canvas at `/`)
+* Repo: https://github.com/Jpalmer95/daggr-studio
+* Dataset: https://huggingface.co/datasets/jkorstad/daggr-studio-workflows
+* Live checks: `/healthz` 200 with the registry summary; `/` and `/builder` both 200 from one
+  process; a real plan driven through the deployed container returned
+  **"healthy — ready to run"** (`Sprite Forge`, `flux1-schnell → not-lain-bg-removal`, 0
+  findings); the canvas then reported `canvas shows 'Sprite Forge' (3 nodes)` and
+  `/api/graph` returned 200 JSON with nodes+edges — i.e. the hot-swap works in production,
+  not just locally.
+* Agent API added after the first deploy: `POST /api/plan`, `POST /api/validate`,
+  `GET /api/canvas`, `GET /api/bricks`, `GET /api/leaderboard`, `GET /healthz`
+  (130 tests passing, including a check that a posted token is never echoed back).
+
+### Build failures hit and fixed (worth remembering)
+
+* `gradio==6.27.0` + `gradio_client==2.5.0` is unresolvable (gradio 6.27 pins
+  gradio-client==2.7.0). The HF build log only says "exit code 1" — the real reason is in
+  `https://huggingface.co/api/spaces/<repo>/logs/build`. Reproduce locally with
+  `pip download --python-version 3.12 -d /tmp/x -r requirements.txt` before deploying.
+* `pytest-asyncio` is required for the ASGI surface tests (`asyncio_mode = auto`).
+
 ## 5. Phased execution
 
 ### Phase 0 — Repo + plan  [x]
@@ -176,9 +199,9 @@ the canvas with no route collisions (both `/builder` and `/` return 200).
 with correct filters; voting increments and persists across a Space restart (fresh clone).
 
 ### Phase 6 — Ship
-- [ ] Dockerfile (`python:3.12-slim`, no gradio pin conflicts), README frontmatter
+- [x] Dockerfile (`python:3.12-slim`, no gradio pin conflicts), README frontmatter
       (`sdk: docker`, `cpu-basic`), `.env`-free secrets (HF_TOKEN as Space secret).
-- [ ] Push GitHub repo (public), create Space, poll to RUNNING, smoke-test `/`, `/builder`,
+- [x] Push GitHub repo (public), create Space, poll to RUNNING, smoke-test `/`, `/builder`,
       `/api/graph` from the public URL.
 - [x] Update the `daggr` / `daggr-pipelines` skills with what was learned.
 

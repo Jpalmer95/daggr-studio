@@ -100,10 +100,24 @@ licence posture you chose — Daggr Studio never relicenses your output.
 ## Also useful without the UI
 
 ```bash
-curl https://<space>/api/bricks?modality=image-edit
-curl https://<space>/api/leaderboard?modality=image-gen&sort=votes
-curl https://<space>/healthz          # registry summary + canvas state
+curl https://jkorstad-daggr-studio.hf.space/api/bricks?modality=image-edit
+curl https://jkorstad-daggr-studio.hf.space/api/leaderboard?modality=image-gen&sort=votes
+curl https://jkorstad-daggr-studio.hf.space/api/canvas          # what the canvas shows
+curl https://jkorstad-daggr-studio.hf.space/healthz             # registry summary + canvas state
+
+# intent -> validated, healed workflow (agent-native; token is optional and never stored)
+curl -X POST https://jkorstad-daggr-studio.hf.space/api/plan \
+  -H 'content-type: application/json' \
+  -d '{"intent":"3D model of a game character from text","industry":"game-dev","max_steps":3}'
+
+# validate / heal a spec you already have
+curl -X POST https://jkorstad-daggr-studio.hf.space/api/validate \
+  -H 'content-type: application/json' -d '{"spec":{...},"heal":true}'
 ```
+
+The Gradio widget API lives at `/builder/gradio_api` (the Builder is mounted under a prefix by
+necessity), so point `gradio_client` at `https://<space>.hf.space/builder/` if you want to drive
+the UI programmatically. The REST endpoints above are the friendlier route for agents.
 
 ## Development
 
