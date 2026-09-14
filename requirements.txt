@@ -1,10 +1,12 @@
 # Runtime dependencies for the Daggr Studio Space (docker SDK).
 #
-# Pinned deliberately: this is an app that generates daggr code for other people, so the
-# versions it runs on must be the versions it was tested on. Verified locally together:
-# daggr 0.8.0 + gradio 6.27.0 on Python 3.14 (and 3.12 in the image).
+# Pinned deliberately: this app generates daggr code for other people, so the versions it
+# runs on must be the versions it was tested with (daggr 0.8.0 + gradio 6.27.0 locally).
+#
+# Do NOT pin gradio_client: gradio 6.27 pins gradio-client==2.7.0 itself, and pinning 2.5.0
+# makes the whole image unresolvable (see MASTER_PLAN §4 "build failures hit and fixed").
 daggr==0.8.0
-gradio==6.27.0          # gradio 6.27 pins gradio-client==2.7.0 itself - do NOT pin it here
+gradio==6.27.0
 
 fastapi>=0.115.0
 uvicorn[standard]>=0.34.0
@@ -12,6 +14,8 @@ huggingface_hub>=1.17.0
 pillow>=10.0.0
 networkx>=3.0
 
-# pytest is present so the Space can self-check (`python -m pytest -q`) in the container;
-# it is small and makes debugging a deployed Space far easier.
-pytest>=8.0.0pytest-asyncio>=1.0.0
+# Tests ship with the image so a deployed Space can self-check (`python -m pytest -q`) -
+# far cheaper than guessing from build logs.
+pytest>=8.0.0
+pytest-asyncio>=1.0.0
+httpx>=0.27.0
