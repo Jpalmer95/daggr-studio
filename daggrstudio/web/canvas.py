@@ -68,22 +68,30 @@ class CanvasRouter:
         self._app: Any | None = None
         self._graph: Any | None = None
         self._spec: dict[str, Any] | None = None
+        self._error: str | None = None
         self._status: str = "no workflow built yet"
 
     # ── state ──────────────────────────────────────────────────────────────────
 
     @property
     def has_graph(self) -> bool:
+        """True only when the canvas is showing a graph that actually built."""
         return self._app is not None
 
     @property
     def status(self) -> str:
         return self._status
 
+    @property
+    def error(self) -> str | None:
+        """Set when the most recent attempt to build a canvas failed."""
+        return self._error
+
     def clear(self) -> None:
         self._app = None
         self._graph = None
         self._spec = None
+        self._error = None
         self._status = "no workflow built yet"
 
     def set_graph(self, graph: Any, spec: Any | None = None) -> str:
@@ -99,16 +107,29 @@ class CanvasRouter:
             server = DaggrServer(graph)
         except Exception as exc:  # pragma: no cover - only on a corrupted daggr install
             self._status = f"canvas unavailable: {type(exc).__name__}: {exc}"
+            self._error = self._status
+            self._app = None
             return self._status
 
         self._app = server.app
         self._graph = graph
         self._spec = spec.to_dict() if hasattr(spec, "to_dict") else spec
+        self._error = None
         self._status = (f"canvas shows '{getattr(graph, 'name', 'workflow')}' "
                         f"({len(getattr(graph, 'nodes', {}))} nodes)")
         return self._status
 
     def set_spec_error(self, message: str) -> None:
+        """
+        Record a failed canvas build and take the stale graph down.
+
+        Keeping the previous graph mounted would make `/healthz` claim a ready canvas while
+        showing something else - readiness must never be more optimistic than reality.
+        """
+        self._app = None
+        self._graph = None
+        self._spec = None
+        self._error = message
         self._status = message
 
     # ── ASGI ───────────────────────────────────────────────────────────────────

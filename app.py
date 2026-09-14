@@ -42,6 +42,7 @@ async def healthz():
         "ok": True,
         "canvas": CANVAS.status,
         "canvas_ready": CANVAS.has_graph,
+        "canvas_error": CANVAS.error,
         "registry": registry.summary(),
         "uptime_s": round(__import__("time").time() - _STARTED_AT, 1),
     })
@@ -68,8 +69,9 @@ async def api_leaderboard(modality: str = "any", industry: str = "any",
 
 @app.get("/api/canvas")
 async def api_canvas():
-    """Which workflow the canvas is currently showing, if any."""
-    return JSONResponse({"status": CANVAS.status, "ready": CANVAS.has_graph})
+    """Which workflow the canvas is showing, plus any failure from the last attempt."""
+    return JSONResponse({"status": CANVAS.status, "ready": CANVAS.has_graph,
+                         "error": CANVAS.error})
 
 
 @app.post("/api/plan")
@@ -100,14 +102,17 @@ async def api_plan(request: Request):
     )
     # never echo anything that could carry a credential
     result.pop("pool", None)
-    # keep the canvas and the agent API consistent: a planned workflow is *shown*, too
-    if result.get("spec"):
+    # Only a workflow that actually validates gets shown on the canvas. Pushing an unhealed
+    # spec is how the canvas ended up failing to build while claiming to be ready.
+    if result.get("ok") and result.get("spec"):
         from daggrstudio.web import services as svc
         from daggrstudio.web.canvas import show_spec
 
         spec = svc.as_spec(result["spec"])
         if spec is not None:
             result["canvas"] = show_spec(spec)
+    elif result.get("spec"):
+        result["canvas"] = "not pushed: the workflow still has blocking findings"
     return JSONResponse(result, status_code=200 if result.get("ok") else 422)
 
 

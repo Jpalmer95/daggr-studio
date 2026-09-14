@@ -242,7 +242,12 @@ def build_ui() -> gr.Blocks:
                                          industry=industry_v, license_posture=license_v,
                                          max_steps=int(steps_v), live_validation=live_v)
             spec = out.get("spec")
-            canvas_note = show_spec(services.as_spec(spec)) if spec else ""
+            # only a healthy workflow is pushed to the canvas; otherwise say why not
+            if spec and out.get("ok"):
+                canvas_note = show_spec(services.as_spec(spec))
+            elif spec:
+                canvas_note = ("not pushed to the canvas: the workflow still has blocking "
+                               "findings — fix them, then press ‘Push to canvas’")
             steps = [s.get("id", "") for s in (spec or {}).get("steps", [])]
             bricks = sorted({s.get("brick_id") for s in (spec or {}).get("steps", [])
                              if s.get("brick_id")})
@@ -271,7 +276,10 @@ def build_ui() -> gr.Blocks:
         def _heal(spec, token_v, model_v, live_v):
             out = services.heal_spec(spec, token=token_v or None, model=model_v or None,
                                      live=live_v)
-            canvas_note = show_spec(services.as_spec(out.get("spec"))) if out.get("spec") else ""
+            if out.get("spec") and out.get("ok"):
+                canvas_note = show_spec(services.as_spec(out["spec"]))
+            elif out.get("spec"):
+                canvas_note = "not pushed to the canvas: still blocking after healing"
             return (out.get("spec"), f"**{out['status']}** — {out.get('message', '')}\n\n"
                                      f"canvas: {canvas_note}", out.get("issues", []),
                     out.get("timeline", ""), out.get("code", ""), out.get("summary", ""))
