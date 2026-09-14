@@ -100,6 +100,14 @@ async def api_plan(request: Request):
     )
     # never echo anything that could carry a credential
     result.pop("pool", None)
+    # keep the canvas and the agent API consistent: a planned workflow is *shown*, too
+    if result.get("spec"):
+        from daggrstudio.web import services as svc
+        from daggrstudio.web.canvas import show_spec
+
+        spec = svc.as_spec(result["spec"])
+        if spec is not None:
+            result["canvas"] = show_spec(spec)
     return JSONResponse(result, status_code=200 if result.get("ok") else 422)
 
 

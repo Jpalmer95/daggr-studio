@@ -91,3 +91,14 @@ async def test_agent_endpoints_never_echo_a_token():
                                   "live_validation": False})
     assert "hf_not_a_real_token" not in resp.text
     assert "hf_not_a_real_token" not in json.dumps(resp.json())
+
+
+@pytest.mark.asyncio
+async def test_agent_validate_with_heal_can_be_requested_in_one_call():
+    spec = concept_spec().to_dict()
+    async with client() as c:
+        resp = await c.post("/api/validate",
+                            json={"spec": spec, "heal": True, "live_validation": False})
+    payload = resp.json()
+    assert "timeline" in payload and "report" not in payload  # heal returns a timeline
+    assert payload.get("spec")  # a healed spec comes back for the caller to use
