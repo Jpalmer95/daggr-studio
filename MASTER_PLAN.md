@@ -121,6 +121,22 @@ Evidence, not claims:
   `GET /api/canvas`, `GET /api/bricks`, `GET /api/leaderboard`, `GET /healthz`
   (130 tests passing, including a check that a posted token is never echoed back).
 
+### Production-only bugs found after deploy (worth remembering)
+
+Found by checking `/healthz` on the *deployed* Space rather than trusting the local run:
+
+* **Readiness lied.** A failed canvas build left the previous graph mounted, so `/healthz`
+  said `canvas_ready: true` while the canvas was showing something else, and the status string
+  carried the error. `set_spec_error()` now tears the stale graph down, and `/healthz` +
+  `/api/canvas` expose `canvas_error`.
+* **Unhealed specs were pushed to the canvas.** The gate was `spec exists` instead of
+  `heal succeeded`, which is how a spec with a `fn` step whose helper was `None` got as far as
+  the canvas builder. Both the UI and `POST /api/plan` now push only workflows that validate,
+  and say why when they decline.
+
+Lesson: exercise the deployed artifact, not just the local one - both bugs were invisible
+locally (where the canvas was never left in a broken state) and obvious in production.
+
 ### Build failures hit and fixed (worth remembering)
 
 * `gradio==6.27.0` + `gradio_client==2.5.0` is unresolvable (gradio 6.27 pins
