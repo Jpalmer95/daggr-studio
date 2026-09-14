@@ -4,8 +4,7 @@
 # versions it runs on must be the versions it was tested on. Verified locally together:
 # daggr 0.8.0 + gradio 6.27.0 on Python 3.14 (and 3.12 in the image).
 daggr==0.8.0
-gradio==6.27.0
-gradio_client==2.5.0
+gradio==6.27.0          # gradio 6.27 pins gradio-client==2.7.0 itself - do NOT pin it here
 
 fastapi>=0.115.0
 uvicorn[standard]>=0.34.0

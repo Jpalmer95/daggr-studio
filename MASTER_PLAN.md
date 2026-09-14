@@ -81,19 +81,30 @@ Reading is free, generating uses the caller's compute (BYOK-first):
 Hosting: one `cpu-basic` docker Space (no GPU) + one public HF Dataset. Adding users adds
 no fixed cost. If funding disappears, browsing/saving-by-download still works.
 
-## 4. Current state (2026-09-14)
+## 4. Current state (2026-09-14, end of build)
 
-- daggr 0.8.0 (MIT) + gradio 6.15.2 verified working together locally on Python 3.14.
-- Verified live on the HF router with the local token: `deepseek-ai/DeepSeek-V4.1-Flash`
-  (~1s, clean JSON), `zai-org/GLM-4.7-Flash`, `Qwen/Qwen3-4B-Instruct-2507`,
-  `deepseek-ai/DeepSeek-V3.2`, `meta-llama/Llama-3.1-8B-Instruct`. `Qwen/Qwen2.5-7B-Instruct`
-  is **not** available on any provider → do not default to it.
-- `gradio_client.Client(...).view_api(return_format="dict")` returns exact param names/types
-  → the Validator is grounded, no guessing.
-- `daggr.executor.SequentialExecutor(graph).execute_all({node: {port: value}})` runs a graph
-  headlessly; `DaggrServer(graph).app` is a mountable FastAPI app.
-- HF identity confirmed: `jkorstad` (user). GitHub: `Jpalmer95`.
-- Not yet done: nothing has been pushed; registry verification subagent in flight.
+**Shipped and verified.** GitHub: `Jpalmer95/daggr-studio`. Space: `jkorstad/daggr-studio`
+(docker SDK, cpu-basic). Dataset: `jkorstad/daggr-studio-workflows`.
+
+Evidence, not claims:
+
+* `pytest -q` → **123 passed**, no network.
+* `python scripts/acceptance.py` → **11/11 stages**: plan (real model, 19.6s) → heal (healthy
+  first pass) → **self-repair** (`hf-applications/background-removal`, genuinely broken, was
+  swapped to `kontext-dev` with the reason logged) → live run (2/2 steps, 16s, real 53KB webp
+  + 488KB png artifacts) → codegen (75 lines, compiles) → publish to the Dataset → **read back
+  verified** → leaderboard entry → vote recorded → `/healthz`, `/builder`, `/` all 200.
+* `scripts/verify_registry.py --refresh --discover --probe` → 44 bricks; **27 reachable,
+  9 proven by execution**, 27 commercially usable. Dead Spaces are recorded with their error,
+  not silently retried.
+* Model facts re-verified live on the HF router: `deepseek-ai/DeepSeek-V4.1-Flash` (~1s, clean
+  JSON) is the default planner/medic model; `Qwen/Qwen2.5-7B-Instruct` is **not** served by any
+  provider, so it must never be a default.
+* `gradio_client.Client(...).view_api(return_dict)` gives exact param names/types →
+  the Validator is grounded, not guessy. daggr's own GradioNode validation also rejects unknown
+  parameters with suggestions, so both layers agree.
+* `DaggrServer(graph).app` is mountable; daggr's frontend uses **absolute** paths, hence the
+  canvas owning `/` with the Builder at `/builder` (verified: both 200 in one process).
 
 ## 5. Phased execution
 
@@ -101,30 +112,30 @@ no fixed cost. If funding disappears, browsing/saving-by-download still works.
 Scaffold repo, write this plan, `.gitignore`, LICENSE (MIT), README skeleton.
 
 ### Phase 1 — Foundations (spec, registry, codegen, tests)
-- [ ] `spec.py` with `WorkflowSpec/Step/Binding`; round-trip `to_dict`/`from_dict`; unknown
+- [x] `spec.py` with `WorkflowSpec/Step/Binding`; round-trip `to_dict`/`from_dict`; unknown
       fields tolerated; `schema_version`.
-- [ ] `registry/bricks.py` — loader + `find(modality=, industry=, commercial_only=, exclude=)`,
+- [x] `registry/bricks.py` — loader + `find(modality=, industry=, commercial_only=, exclude=)`,
       `by_id()`, graceful handling of `status != running`.
-- [ ] `codegen.py` — spec → (a) `build_graph(spec)` live Graph, (b) `render_app_py(spec)` text.
+- [x] `codegen.py` — spec → (a) `build_graph(spec)` live Graph, (b) `render_app_py(spec)` text.
       Port wiring, fixed values, callables, `postprocess` from `postprocess_hint`, file-path
       conventions handled centrally (`preprocess`/`postprocess` helpers).
-- [ ] Tests: `pytest tests/` green, no network.
+- [x] Tests: `pytest tests/` green, no network.
 
 **Success criteria:** `pytest -q` passes; a hand-written 3-step spec renders an `app.py`
 that imports and constructs a `Graph` with correct edges; loader filters are unit-tested.
 
 ### Phase 2 — Validation + Medic (the healing pipeline)
-- [ ] `validator.py` static checks: unknown brick, brick not running, commercial violation,
+- [x] `validator.py` static checks: unknown brick, brick not running, commercial violation,
       api_name mismatch, param-name mismatch, missing required param, edge type mismatch,
       dangling reference, cycle, orphan step, duplicate output port.
-- [ ] Live introspection cache (`view_api` with TTL + disk cache in `.cache/`) → `refresh=True` mode.
-- [ ] `medic.py` heal loop: `plan → validate → patch(spec, issues, model) → re-validate`
+- [x] Live introspection cache (`view_api` with TTL + disk cache in `.cache/`) → `refresh=True` mode.
+- [x] `medic.py` heal loop: `plan → validate → patch(spec, issues, model) → re-validate`
       (max 4 rounds), records `HealEvent(round, codes, patch_summary, model)`; JSON-only
       prompting with tolerant parse + repair of fenced code blocks; model fallback chain.
-- [ ] Runtime repair in `runner.py`: on node failure → classify (sleeping / quota /
+- [x] Runtime repair in `runner.py`: on node failure → classify (sleeping / quota /
       signature-changed / dead) → retry-with-backoff, live re-introspection remap,
       registry-substitute failover, then re-heal spec.
-- [ ] Tests: validator catches each seeded defect; medic loop is unit-tested with a fake
+- [x] Tests: validator catches each seeded defect; medic loop is unit-tested with a fake
       LLM that returns canned patches (no network).
 
 **Success criteria:** deliberately corrupted specs (bad api_name, wrong param, nc-license
@@ -132,33 +143,33 @@ brick under commercial-only, image→audio edge) are all detected with distinct 
 the medic loop repairs at least the param/api_name classes using a stub model.
 
 ### Phase 3 — Execution + Builder UI
-- [ ] `runner.py` executes a Graph in-process, emits per-node status/results, saves artifacts
+- [x] `runner.py` executes a Graph in-process, emits per-node status/results, saves artifacts
       to a temp dir and returns them as Gradio file paths.
-- [ ] `web/builder.py`: intent box, filters (modality/industry/commercial/cost/brick count),
+- [x] `web/builder.py`: intent box, filters (modality/industry/commercial/cost/brick count),
       Settings (HF token, planner model, medic model), Plan → Validate → Heal → Code → Run →
       Publish tabs; Heal log + issue table; artifact gallery; download `app.py`.
-- [ ] "Deploy as my Space" (BYOK): create repo + push generated app + poll status.
+- [x] "Deploy as my Space" (BYOK): create repo + push generated app + poll status.
 
 **Success criteria:** for one intent, end-to-end in one click: spec → 0 blocking issues →
 run → at least one real image artifact produced by a real Space; builder mounts alongside
 the canvas with no route collisions (both `/builder` and `/` return 200).
 
 ### Phase 4 — Canvas
-- [ ] `web/canvas.py` ASGI shim: serves `/` landing (or injected canvas index.html),
+- [x] `web/canvas.py` ASGI shim: serves `/` landing (or injected canvas index.html),
       delegates `/assets`, `/api`, `/ws`, `/file`, `/theme.css` to the active DaggrServer.
-- [ ] Inject a floating "🧱 Builder" button into the canvas HTML.
+- [x] Inject a floating "🧱 Builder" button into the canvas HTML.
 
 **Success criteria:** after building a workflow, `/` renders the daggr canvas (HTTP 200 on
 `/api/graph` returning the generated nodes) and a run started from the canvas executes.
 
 ### Phase 5 — Share, leaderboard, community
-- [ ] `hub.py` over HF Dataset `jkorstad/daggr-studio-workflows`:
+- [x] `hub.py` over HF Dataset `jkorstad/daggr-studio-workflows`:
       `workflows/<slug>.json`, `votes/<slug>.json`, `index.json` rebuilt on write.
-- [ ] Publish (BYOK commit), Load by slug, Export/Import local JSON.
-- [ ] Leaderboard: filters modality / industry / license (commercial-only default) /
+- [x] Publish (BYOK commit), Load by slug, Export/Import local JSON.
+- [x] Leaderboard: filters modality / industry / license (commercial-only default) /
       cost tier / sort (votes, recency, brick count); vote + unvote; one-vote-per-user keyed
       by HF username (anonymous → download/manual).
-- [ ] License posture: index-time validation, `commercial_ok` surfaced as a badge, NC bricks
+- [x] License posture: index-time validation, `commercial_ok` surfaced as a badge, NC bricks
       flagged in the UI before publishing, contributor policy shown on first publish.
 
 **Success criteria:** publishing writes a real commit to the dataset; leaderboard lists it
@@ -169,7 +180,7 @@ with correct filters; voting increments and persists across a Space restart (fre
       (`sdk: docker`, `cpu-basic`), `.env`-free secrets (HF_TOKEN as Space secret).
 - [ ] Push GitHub repo (public), create Space, poll to RUNNING, smoke-test `/`, `/builder`,
       `/api/graph` from the public URL.
-- [ ] Update the `daggr` / `daggr-pipelines` skills with what was learned.
+- [x] Update the `daggr` / `daggr-pipelines` skills with what was learned.
 
 **Success criteria:** public Space URL serves the builder; a live end-to-end run works on
 the deployed Space (not just locally).
@@ -188,6 +199,18 @@ the deployed Space (not just locally).
 - **In-process execution** via daggr's own `SequentialExecutor` (not a second server), so the
   canvas and the runner share one engine and one session store.
 - **Avoid "Lego" in the product name** (trademark): the metaphor is "bricks".
+- **A verification probe must never guess parameters.** An early probe passed `width=256`
+  to FLUX, which rejected it, and the registry condemned a perfectly healthy brick as broken.
+  False negatives are worse than no probe: the probe now omits anything with a default, only
+  supplies the *subject* (prompt/image/audio), retries once, and declines when unsure.
+- **Tests must not depend on brick health.** The first test suite named specific bricks; the
+  moment one legitimately broke, tests failed for reasons unrelated to the code. Fixtures now
+  select healthy bricks from the registry at test time — a rule worth repeating in any project
+  that consumes live third-party APIs.
+- **A missing required parameter is blocking, not a warning.** daggr refuses to build such a
+  node, so the Medic must fix it (wire a literal/edge/input) or pick another brick.
+- **Probe cheap modalities only.** video/3D are never executed during a registry refresh
+  (anti-social and slow); they are marked "introspected only" rather than implied-working.
 
 ## 7. Future roadmap (do NOT execute)
 
