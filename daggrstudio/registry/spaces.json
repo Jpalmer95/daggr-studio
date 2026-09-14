@@ -1,0 +1,1269 @@
+{
+  "verified_with": "gradio_client 2.7.0 / huggingface_hub 1.31.0",
+  "bricks": [
+    {
+      "id": "radames-real-time-text-to-image-sdxl-lightning",
+      "kind": "space",
+      "source": "radames/Real-Time-Text-to-Image-SDXL-Lightning",
+      "api_name": null,
+      "modality": "image-gen",
+      "industries": [
+        "art",
+        "game-dev",
+        "marketing",
+        "general"
+      ],
+      "license": "unknown",
+      "commercial_ok": false,
+      "inputs": {},
+      "outputs": [],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "No callable endpoint found in view_api()",
+      "verified_at": "2026-09-14T19:28:06.141103+00:00",
+      "notes": "",
+      "likes": 616,
+      "lastModified": "2026-07-14T09:10:02+00:00"
+    },
+    {
+      "id": "flux1-schnell",
+      "kind": "space",
+      "source": "black-forest-labs/FLUX.1-schnell",
+      "api_name": "/infer",
+      "modality": "image-gen",
+      "industries": [
+        "art",
+        "game-dev",
+        "3d",
+        "marketing",
+        "film"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {
+        "prompt": "str",
+        "seed": "number",
+        "randomize_seed": "bool",
+        "width": "number",
+        "height": "number",
+        "num_inference_steps": "number"
+      },
+      "outputs": [
+        "file",
+        "number"
+      ],
+      "output_kind": "image",
+      "postprocess_hint": "tuple_index:0",
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:29:06.753148+00:00",
+      "notes": "fast, Apache-2.0, daggr-proven",
+      "likes": 5127,
+      "last_modified": "2026-06-17 03:17:55+00:00",
+      "probe": "ok",
+      "probe_seconds": 5.2
+    },
+    {
+      "id": "flux1-dev",
+      "kind": "space",
+      "source": "black-forest-labs/FLUX.1-dev",
+      "api_name": "/infer",
+      "modality": "image-gen",
+      "industries": [
+        "art",
+        "film",
+        "marketing"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {
+        "prompt": "str",
+        "seed": "number",
+        "randomize_seed": "bool",
+        "width": "number",
+        "height": "number",
+        "guidance_scale": "number",
+        "num_inference_steps": "number"
+      },
+      "outputs": [
+        "file",
+        "number"
+      ],
+      "output_kind": "image",
+      "postprocess_hint": "tuple_index:0",
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:29:13.693865+00:00",
+      "notes": "higher quality than schnell",
+      "likes": 9541,
+      "last_modified": "2025-11-25 22:59:20+00:00",
+      "probe": "ok",
+      "probe_seconds": 27.6
+    },
+    {
+      "id": "sd35-large",
+      "kind": "space",
+      "source": "stabilityai/stable-diffusion-3.5-large",
+      "api_name": "/infer",
+      "modality": "image-gen",
+      "industries": [
+        "art",
+        "marketing",
+        "film"
+      ],
+      "license": "other",
+      "commercial_ok": false,
+      "inputs": {
+        "prompt": "str",
+        "negative_prompt": "str",
+        "seed": "number",
+        "randomize_seed": "bool",
+        "width": "number",
+        "height": "number",
+        "guidance_scale": "number",
+        "num_inference_steps": "number"
+      },
+      "outputs": [
+        "file",
+        "number"
+      ],
+      "output_kind": "image",
+      "postprocess_hint": "tuple_index:0",
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:29:43.309404+00:00",
+      "notes": "community licence, check revenue terms",
+      "likes": 2042,
+      "last_modified": "2026-05-22 13:49:42+00:00",
+      "probe": "skipped"
+    },
+    {
+      "id": "z-image-turbo",
+      "kind": "space",
+      "source": "hf-applications/Z-Image-Turbo",
+      "api_name": "/generate_image",
+      "modality": "image-gen",
+      "industries": [
+        "art",
+        "game-dev",
+        "marketing"
+      ],
+      "license": "unknown",
+      "commercial_ok": false,
+      "inputs": {
+        "prompt": "str",
+        "height": "number",
+        "width": "number",
+        "seed": "number"
+      },
+      "outputs": [
+        "file",
+        "number"
+      ],
+      "output_kind": "image",
+      "postprocess_hint": "tuple_index:0",
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:29:44.965917+00:00",
+      "notes": "official HF app, fast, often sleeping",
+      "likes": 1,
+      "last_modified": "2026-01-26 19:16:36+00:00",
+      "probe": "ok",
+      "probe_seconds": 11.1
+    },
+    {
+      "id": "kontext-dev",
+      "kind": "space",
+      "source": "black-forest-labs/FLUX.1-Kontext-dev",
+      "api_name": "/infer",
+      "modality": "image-edit",
+      "industries": [
+        "art",
+        "game-dev",
+        "marketing"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {
+        "input_image": "file",
+        "prompt": "str",
+        "seed": "number",
+        "randomize_seed": "bool",
+        "guidance_scale": "number",
+        "steps": "number"
+      },
+      "outputs": [
+        "file",
+        "number"
+      ],
+      "output_kind": "image",
+      "postprocess_hint": "tuple_index:0",
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:29:57.951317+00:00",
+      "notes": "instruction-based image editing",
+      "likes": 1626,
+      "last_modified": "2026-05-13 14:49:14+00:00",
+      "probe": "ok",
+      "probe_seconds": 33.3
+    },
+    {
+      "id": "qwen-image-edit",
+      "kind": "space",
+      "source": "Qwen/Qwen-Image-Edit",
+      "api_name": "/infer",
+      "modality": "image-edit",
+      "industries": [
+        "art",
+        "marketing",
+        "film"
+      ],
+      "license": "unknown",
+      "commercial_ok": false,
+      "inputs": {
+        "image": "file",
+        "prompt": "str",
+        "seed": "number",
+        "randomize_seed": "bool",
+        "true_guidance_scale": "number",
+        "num_inference_steps": "number",
+        "rewrite_prompt": "bool"
+      },
+      "outputs": [
+        "file",
+        "number"
+      ],
+      "output_kind": "image",
+      "postprocess_hint": "tuple_index:0",
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:26:01.875520+00:00",
+      "notes": "text-guided image editing",
+      "likes": 863,
+      "last_modified": "2026-06-05 06:37:33+00:00",
+      "probe": "skipped"
+    },
+    {
+      "id": "background-removal",
+      "kind": "space",
+      "source": "hf-applications/background-removal",
+      "api_name": "/image",
+      "modality": "image-edit",
+      "industries": [
+        "game-dev",
+        "art",
+        "3d",
+        "marketing"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {
+        "image": "file"
+      },
+      "outputs": [
+        "file"
+      ],
+      "output_kind": "image",
+      "postprocess_hint": "tuple_index:1",
+      "status": "error",
+      "runtime_error": "execution probe failed: AppError: RuntimeError",
+      "verified_at": "2026-09-14T22:30:32.895670+00:00",
+      "notes": "official HF app; returns (orig, cut)",
+      "likes": 12,
+      "last_modified": "2025-11-14 00:43:33+00:00",
+      "probe": "failed"
+    },
+    {
+      "id": "not-lain-bg-removal",
+      "kind": "space",
+      "source": "not-lain/background-removal",
+      "api_name": "/image",
+      "modality": "image-edit",
+      "industries": [
+        "game-dev",
+        "art",
+        "3d"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {
+        "image": "file"
+      },
+      "outputs": [
+        "file"
+      ],
+      "output_kind": "image",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:30:50.428347+00:00",
+      "notes": "single in/out bg removal",
+      "likes": 2949,
+      "last_modified": "2026-04-20 14:16:25+00:00",
+      "probe": "ok",
+      "probe_seconds": 3.2
+    },
+    {
+      "id": "bria-rmbg",
+      "kind": "space",
+      "source": "briaai/BRIA-RMBG-2.0",
+      "api_name": "/image",
+      "modality": "image-edit",
+      "industries": [
+        "game-dev",
+        "art",
+        "marketing"
+      ],
+      "license": "unknown",
+      "commercial_ok": false,
+      "inputs": {
+        "image": "file"
+      },
+      "outputs": [
+        "file",
+        "file"
+      ],
+      "output_kind": "image",
+      "postprocess_hint": "tuple_index:0",
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:30:55.345561+00:00",
+      "notes": "high-quality matting",
+      "likes": 968,
+      "last_modified": "2026-05-14 10:32:14+00:00",
+      "probe": "ok",
+      "probe_seconds": 1.8
+    },
+    {
+      "id": "swin2sr",
+      "kind": "space",
+      "source": "Xenova/swin2SR",
+      "api_name": "/predict",
+      "modality": "upscale",
+      "industries": [
+        "art",
+        "game-dev",
+        "film"
+      ],
+      "license": "unknown",
+      "commercial_ok": false,
+      "inputs": {},
+      "outputs": [],
+      "output_kind": "image",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa8748a-02158dd22e09e42412a8ef55;ebcff401-61fd-425f-bfbe-2967411ea559)\n\nRepository Not Found for url: https://huggingface.co/api/spaces/Xenova/swin2SR.\nPlease make sure you specified the correct `repo_id` and `repo_type`.\nIf you are try",
+      "verified_at": "2026-09-14T22:26:18.176147+00:00",
+      "notes": "super-resolution",
+      "likes": null,
+      "last_modified": null
+    },
+    {
+      "id": "real-esrgan",
+      "kind": "space",
+      "source": "ai-forever/Real-ESRGAN",
+      "api_name": "/predict",
+      "modality": "upscale",
+      "industries": [
+        "art",
+        "film",
+        "game-dev"
+      ],
+      "license": "unknown",
+      "commercial_ok": false,
+      "inputs": {},
+      "outputs": [],
+      "output_kind": "image",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa8748b-2b823c397c3d2d7938c4d642;a84e639f-9a52-429b-9721-088cc0a61e90)\n\nRepository Not Found for url: https://huggingface.co/api/spaces/ai-forever/Real-ESRGAN.\nPlease make sure you specified the correct `repo_id` and `repo_type`.\nIf you",
+      "verified_at": "2026-09-14T22:26:19.411375+00:00",
+      "notes": "classic upscaler",
+      "likes": 257,
+      "last_modified": "2022-09-25 13:17:44+00:00"
+    },
+    {
+      "id": "triposg",
+      "kind": "space",
+      "source": "VAST-AI/TripoSG",
+      "api_name": "/image_to_3d",
+      "modality": "image-to-3d",
+      "industries": [
+        "game-dev",
+        "3d"
+      ],
+      "license": "unknown",
+      "commercial_ok": false,
+      "inputs": {
+        "image": "file",
+        "seed": "number",
+        "num_inference_steps": "number",
+        "guidance_scale": "number",
+        "simplify": "bool",
+        "target_face_num": "number"
+      },
+      "outputs": [
+        "file"
+      ],
+      "output_kind": "model3d",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:30:58.794542+00:00",
+      "notes": "most reliable open image-to-3D",
+      "likes": 885,
+      "last_modified": "2025-05-15 17:12:12+00:00"
+    },
+    {
+      "id": "trellis2",
+      "kind": "space",
+      "source": "microsoft/TRELLIS.2",
+      "api_name": "/image_to_3d",
+      "modality": "image-to-3d",
+      "industries": [
+        "game-dev",
+        "3d",
+        "art"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {
+        "image": "file",
+        "seed": "number",
+        "resolution": "literal['512', '1024', '1536']",
+        "ss_guidance_strength": "number",
+        "ss_guidance_rescale": "number",
+        "ss_sampling_steps": "number",
+        "ss_rescale_t": "number",
+        "shape_slat_guidance_strength": "number",
+        "shape_slat_guidance_rescale": "number",
+        "shape_slat_sampling_steps": "number",
+        "shape_slat_rescale_t": "number",
+        "tex_slat_guidance_strength": "number",
+        "tex_slat_guidance_rescale": "number",
+        "tex_slat_sampling_steps": "number",
+        "tex_slat_rescale_t": "number"
+      },
+      "outputs": [
+        "str"
+      ],
+      "output_kind": "model3d",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:31:00.520442+00:00",
+      "notes": "high quality; may need HF token, multi-step API",
+      "likes": 2098,
+      "last_modified": "2026-05-20 07:56:11+00:00"
+    },
+    {
+      "id": "hunyuan3d-2",
+      "kind": "space",
+      "source": "Tencent/Hunyuan3D-2",
+      "api_name": "/generation_all",
+      "modality": "image-to-3d",
+      "industries": [
+        "game-dev",
+        "3d"
+      ],
+      "license": "unknown",
+      "commercial_ok": false,
+      "inputs": {
+        "caption": "str",
+        "image": "file",
+        "mv_image_front": "file",
+        "mv_image_back": "file",
+        "mv_image_left": "file",
+        "mv_image_right": "file",
+        "steps": "number",
+        "guidance_scale": "number",
+        "seed": "number",
+        "octree_resolution": "number",
+        "check_box_rembg": "bool",
+        "num_chunks": "number",
+        "randomize_seed": "bool"
+      },
+      "outputs": [
+        "file",
+        "file",
+        "str",
+        "dict",
+        "number"
+      ],
+      "output_kind": "model3d",
+      "postprocess_hint": "tuple_index:0",
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:31:02.452904+00:00",
+      "notes": "non-commercial community licence",
+      "likes": 3379,
+      "last_modified": "2025-06-02 15:04:38+00:00"
+    },
+    {
+      "id": "hunyuan3d-21",
+      "kind": "space",
+      "source": "tencent/Hunyuan3D-2.1",
+      "api_name": "/generation_all",
+      "modality": "image-to-3d",
+      "industries": [
+        "game-dev",
+        "3d"
+      ],
+      "license": "unknown",
+      "commercial_ok": false,
+      "inputs": {
+        "image": "file",
+        "mv_image_front": "file",
+        "mv_image_back": "file",
+        "mv_image_left": "file",
+        "mv_image_right": "file",
+        "steps": "number",
+        "guidance_scale": "number",
+        "seed": "number",
+        "octree_resolution": "number",
+        "check_box_rembg": "bool",
+        "num_chunks": "number",
+        "randomize_seed": "bool"
+      },
+      "outputs": [
+        "file",
+        "file",
+        "str",
+        "dict",
+        "number"
+      ],
+      "output_kind": "model3d",
+      "postprocess_hint": "tuple_index:0",
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:31:04.171697+00:00",
+      "notes": "newer Hunyuan variant",
+      "likes": 2232,
+      "last_modified": "2025-08-11 06:13:06+00:00"
+    },
+    {
+      "id": "shap-e",
+      "kind": "space",
+      "source": "hysts/Shap-E",
+      "api_name": "/image-to-3d",
+      "modality": "text-to-3d",
+      "industries": [
+        "3d",
+        "art"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {
+        "image": "file",
+        "seed": "number",
+        "guidance_scale": "number",
+        "num_inference_steps": "number"
+      },
+      "outputs": [
+        "file"
+      ],
+      "output_kind": "model3d",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:31:05.951629+00:00",
+      "notes": "text/photo to 3D, old but license-friendly",
+      "likes": 558,
+      "last_modified": "2026-05-27 10:26:03+00:00"
+    },
+    {
+      "id": "wan21",
+      "kind": "space",
+      "source": "Wan-AI/Wan2.1",
+      "api_name": "/t2v_generation_async",
+      "modality": "video",
+      "industries": [
+        "film",
+        "art"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {
+        "prompt": "str",
+        "size": "literal['1280*720', '960*960', '720*1280",
+        "watermark_wan": "bool",
+        "seed": "number"
+      },
+      "outputs": [
+        "number",
+        "number"
+      ],
+      "output_kind": "video",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "declared video output but the endpoint returns only numbers (async/job-style API) - not usable as a synchronous brick",
+      "verified_at": "2026-09-14T22:31:07.609139+00:00",
+      "notes": "Apache-2.0 text/image to video",
+      "likes": 2173,
+      "last_modified": "2025-03-20 12:20:36+00:00"
+    },
+    {
+      "id": "ltx2-distilled",
+      "kind": "space",
+      "source": "Lightricks/ltx-2-distilled",
+      "api_name": "/generate_video",
+      "modality": "video",
+      "industries": [
+        "film",
+        "marketing",
+        "art"
+      ],
+      "license": "unknown",
+      "commercial_ok": false,
+      "inputs": {
+        "input_image": "file",
+        "prompt": "str",
+        "duration": "number",
+        "enhance_prompt": "bool",
+        "seed": "number",
+        "randomize_seed": "bool",
+        "height": "number",
+        "width": "number"
+      },
+      "outputs": [
+        "file",
+        "number"
+      ],
+      "output_kind": "video",
+      "postprocess_hint": "tuple_index:0",
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:31:09.264140+00:00",
+      "notes": "fast image-to-video; check licence",
+      "likes": 222,
+      "last_modified": "2026-06-16 15:18:52+00:00"
+    },
+    {
+      "id": "edge-tts",
+      "kind": "space",
+      "source": "innoai/Edge-TTS-Text-to-Speech",
+      "api_name": "/tts_interface",
+      "modality": "audio-tts",
+      "industries": [
+        "music-production",
+        "film",
+        "marketing",
+        "general"
+      ],
+      "license": "gpl-2.0",
+      "commercial_ok": true,
+      "inputs": {
+        "text": "str",
+        "voice": "literal['', 'af-za-adrineural - af-za",
+        "rate": "number",
+        "pitch": "number"
+      },
+      "outputs": [
+        "file",
+        "str"
+      ],
+      "output_kind": "audio",
+      "postprocess_hint": "tuple_index:0",
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:31:10.945828+00:00",
+      "notes": "fast, MIT-ish, reliable",
+      "likes": 1265,
+      "last_modified": "2026-03-28 01:45:11+00:00",
+      "probe": "ok",
+      "probe_seconds": 0.9
+    },
+    {
+      "id": "kokoro-tts",
+      "kind": "space",
+      "source": "hexgrad/Kokoro-TTS",
+      "api_name": "/tts",
+      "modality": "audio-tts",
+      "industries": [
+        "music-production",
+        "film",
+        "general"
+      ],
+      "license": "apache-2.0",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [],
+      "output_kind": "audio",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "Space exposes no named API endpoints (Use via API is unavailable)",
+      "verified_at": "2026-09-14T22:26:35.523894+00:00",
+      "notes": "Apache-2.0 quality TTS",
+      "likes": 3461,
+      "last_modified": "2025-04-09 20:21:52+00:00"
+    },
+    {
+      "id": "qwen3-tts",
+      "kind": "space",
+      "source": "ysharma/Qwen3-TTS",
+      "api_name": "/generate_voice_design",
+      "modality": "audio-tts",
+      "industries": [
+        "film",
+        "marketing"
+      ],
+      "license": "apache-2.0",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [],
+      "output_kind": "audio",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "ValueError: The current space is in the invalid state: RUNTIME_ERROR. Please contact the owner to fix this.",
+      "verified_at": "2026-09-14T22:26:36.899901+00:00",
+      "notes": "voice design via description",
+      "likes": 2,
+      "last_modified": "2026-01-28 21:35:59+00:00"
+    },
+    {
+      "id": "melo-tts",
+      "kind": "space",
+      "source": "mrfakename/MeloTTS",
+      "api_name": "/synthesize",
+      "modality": "audio-tts",
+      "industries": [
+        "general",
+        "film"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {
+        "text": "str",
+        "speaker": "literal['en-us', 'en-br', 'en_india', 'e",
+        "speed": "number",
+        "language": "literal['en', 'es', 'fr', 'zh', 'jp', 'k"
+      },
+      "outputs": [
+        "file"
+      ],
+      "output_kind": "audio",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:31:13.518471+00:00",
+      "notes": "multilingual TTS, used in daggr docs",
+      "likes": 482,
+      "last_modified": "2025-12-19 18:20:40+00:00",
+      "probe": "ok",
+      "probe_seconds": 6.6
+    },
+    {
+      "id": "chatterbox",
+      "kind": "space",
+      "source": "ResembleAI/Chatterbox",
+      "api_name": "/generate_tts_audio",
+      "modality": "audio-tts",
+      "industries": [
+        "music-production",
+        "film"
+      ],
+      "license": "unknown",
+      "commercial_ok": false,
+      "inputs": {
+        "text_input": "str",
+        "audio_prompt_path_input": "file",
+        "exaggeration_input": "number",
+        "temperature_input": "number",
+        "seed_num_input": "number",
+        "cfgw_input": "number",
+        "vad_trim_input": "bool"
+      },
+      "outputs": [
+        "file"
+      ],
+      "output_kind": "audio",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:26:41.188010+00:00",
+      "notes": "expressive TTS",
+      "likes": 1754,
+      "last_modified": "2026-01-14 18:45:12+00:00",
+      "probe": "skipped"
+    },
+    {
+      "id": "ace-step",
+      "kind": "space",
+      "source": "ACE-Step/ACE-Step-v1-3.5B",
+      "api_name": "/__call__",
+      "modality": "music",
+      "industries": [
+        "music-production",
+        "art"
+      ],
+      "license": "apache-2.0",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [],
+      "output_kind": "audio",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa874a2-6fa048cb6b53552060dfd9e1;3cd15908-b885-4558-bb15-b6c81dc2daa7)\n\nRepository Not Found for url: https://huggingface.co/api/spaces/ACE-Step/ACE-Step-v1-3.5B.\nPlease make sure you specified the correct `repo_id` and `repo_type`.\nIf ",
+      "verified_at": "2026-09-14T22:26:42.435817+00:00",
+      "notes": "full song generation from text",
+      "likes": 746,
+      "last_modified": "2025-05-22 09:15:43+00:00"
+    },
+    {
+      "id": "musicgen",
+      "kind": "space",
+      "source": "facebook/MusicGen",
+      "api_name": "/predict_batched",
+      "modality": "music",
+      "industries": [
+        "music-production",
+        "film"
+      ],
+      "license": "cc-by-nc-4.0",
+      "commercial_ok": false,
+      "inputs": {
+        "texts": "str",
+        "melodies": "file"
+      },
+      "outputs": [
+        "file"
+      ],
+      "output_kind": "audio",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "execution probe failed: AppError: The upstream Gradio app has raised an exception but has not enabled verbose error reporting. To enable, set show_error=True in launch().",
+      "verified_at": "2026-09-14T22:31:21.827987+00:00",
+      "notes": "MusicGen text-to-music",
+      "likes": 5095,
+      "last_modified": "2026-05-27 11:46:50+00:00",
+      "probe": "failed"
+    },
+    {
+      "id": "stable-audio",
+      "kind": "space",
+      "source": "stabilityai/stable-audio-open-1.0",
+      "api_name": "/predict",
+      "modality": "music",
+      "industries": [
+        "music-production",
+        "film"
+      ],
+      "license": "other",
+      "commercial_ok": false,
+      "inputs": {},
+      "outputs": [],
+      "output_kind": "audio",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa874a6-77a3dbd77658276b60f4f951;28879303-ab10-4639-a31e-5dcba608a0d7)\n\nRepository Not Found for url: https://huggingface.co/api/spaces/stabilityai/stable-audio-open-1.0.\nPlease make sure you specified the correct `repo_id` and `repo_ty",
+      "verified_at": "2026-09-14T22:26:46.367001+00:00",
+      "notes": "open audio generation",
+      "likes": 1615,
+      "last_modified": "2025-06-19 21:53:23+00:00"
+    },
+    {
+      "id": "moondream2",
+      "kind": "space",
+      "source": "vikhyatk/moondream2",
+      "api_name": "/answer_question",
+      "modality": "vision",
+      "industries": [
+        "general",
+        "art",
+        "game-dev"
+      ],
+      "license": "apache-2.0",
+      "commercial_ok": true,
+      "inputs": {
+        "img": "file",
+        "prompt": "str"
+      },
+      "outputs": [
+        "str"
+      ],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "execution probe failed: AppError: The upstream Gradio app has raised an exception but has not enabled verbose error reporting. To enable, set show_error=True in launch().",
+      "verified_at": "2026-09-14T22:31:34.509266+00:00",
+      "notes": "param is 'img' not 'image'",
+      "likes": 444,
+      "last_modified": "2025-01-09 11:09:44+00:00",
+      "probe": "failed"
+    },
+    {
+      "id": "qwen3-vl",
+      "kind": "space",
+      "source": "Qwen/Qwen3-VL-8B-Instruct",
+      "api_name": "/chat",
+      "modality": "vision",
+      "industries": [
+        "general",
+        "game-dev",
+        "marketing"
+      ],
+      "license": "apache-2.0",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa874aa-35d8391e4301982a5dbe5748;95704c60-aa96-471b-8cf2-907e3ac6ddb3)\n\nRepository Not Found for url: https://huggingface.co/api/spaces/Qwen/Qwen3-VL-8B-Instruct.\nPlease make sure you specified the correct `repo_id` and `repo_type`.\nIf ",
+      "verified_at": "2026-09-14T22:26:50.229825+00:00",
+      "notes": "modern VLM captioning/QA",
+      "likes": 1117,
+      "last_modified": "2025-10-15 16:16:59+00:00"
+    },
+    {
+      "id": "smolvlm",
+      "kind": "space",
+      "source": "HuggingFaceTB/SmolVLM-Instruct",
+      "api_name": "/chat",
+      "modality": "vision",
+      "industries": [
+        "general"
+      ],
+      "license": "apache-2.0",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa874ab-0f671a30553b0e56053fc4ae;6bd4743d-a37b-4278-b915-630a9ef2bc53)\n\nRepository Not Found for url: https://huggingface.co/api/spaces/HuggingFaceTB/SmolVLM-Instruct.\nPlease make sure you specified the correct `repo_id` and `repo_type`",
+      "verified_at": "2026-09-14T22:26:51.463487+00:00",
+      "notes": "tiny VLM",
+      "likes": 598,
+      "last_modified": "2025-04-08 07:26:41+00:00"
+    },
+    {
+      "id": "en2fr-local",
+      "kind": "space",
+      "source": "abidlabs/en2fr",
+      "api_name": "/predict",
+      "modality": "text",
+      "industries": [
+        "general"
+      ],
+      "license": "unknown",
+      "commercial_ok": false,
+      "inputs": {
+        "text": "str"
+      },
+      "outputs": [
+        "str"
+      ],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:26:53.041936+00:00",
+      "notes": "lightweight translation, run_locally friendly",
+      "likes": 5,
+      "last_modified": "2026-01-27 19:48:42+00:00",
+      "probe": "ok",
+      "probe_seconds": 0.9
+    },
+    {
+      "id": "image-caption-blip",
+      "kind": "space",
+      "source": "Salesforce/BLIP",
+      "api_name": "/predict",
+      "modality": "vision",
+      "industries": [
+        "general",
+        "marketing"
+      ],
+      "license": "bsd-3-clause",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "ValueError: The current space is in the invalid state: BUILD_ERROR. Please contact the owner to fix this.",
+      "verified_at": "2026-09-14T22:26:55.270599+00:00",
+      "notes": "classic captioning",
+      "likes": 432,
+      "last_modified": "2023-03-23 06:10:33+00:00"
+    },
+    {
+      "id": "text-to-pokemon",
+      "kind": "space",
+      "source": "nateraw/text-to-pokemon",
+      "api_name": "/predict",
+      "modality": "image-gen",
+      "industries": [
+        "game-dev",
+        "art"
+      ],
+      "license": "unknown",
+      "commercial_ok": false,
+      "inputs": {},
+      "outputs": [],
+      "output_kind": "image",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa874b0-301bc99348d175461628d6cc;fe356a98-ac53-4c1d-8a5d-424811f1d913)\n\nRepository Not Found for url: https://huggingface.co/api/spaces/nateraw/text-to-pokemon.\nPlease make sure you specified the correct `repo_id` and `repo_type`.\nIf yo",
+      "verified_at": "2026-09-14T22:26:56.512113+00:00",
+      "notes": "tiny, fast, fun",
+      "likes": null,
+      "last_modified": null
+    },
+    {
+      "id": "depth-anything",
+      "kind": "space",
+      "source": "depth-anything/Depth-Anything-V2",
+      "api_name": null,
+      "modality": "utility",
+      "industries": [
+        "game-dev",
+        "3d",
+        "art"
+      ],
+      "license": "apache-2.0",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [],
+      "output_kind": "image",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "no usable endpoint among ['/on_submit']",
+      "verified_at": "2026-09-14T22:26:58.129530+00:00",
+      "notes": "depth maps for 3D work",
+      "likes": 706,
+      "last_modified": "2026-05-06 11:03:49+00:00"
+    },
+    {
+      "id": "llm-deepseek-v4-1-flash",
+      "kind": "inference_model",
+      "source": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "api_name": null,
+      "modality": "text",
+      "industries": [
+        "general",
+        "game-dev",
+        "marketing",
+        "music-production"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [
+        "str"
+      ],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:26:59.256804+00:00",
+      "notes": "fast, clean JSON - default planner/medic model"
+    },
+    {
+      "id": "llm-deepseek-v3-2",
+      "kind": "inference_model",
+      "source": "deepseek-ai/DeepSeek-V3.2",
+      "api_name": null,
+      "modality": "text",
+      "industries": [
+        "general",
+        "game-dev"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [
+        "str"
+      ],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:27:00.302412+00:00",
+      "notes": "stronger reasoning fallback"
+    },
+    {
+      "id": "llm-glm-4-7-flash",
+      "kind": "inference_model",
+      "source": "zai-org/GLM-4.7-Flash",
+      "api_name": null,
+      "modality": "text",
+      "industries": [
+        "general"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [
+        "str"
+      ],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:27:01.903170+00:00",
+      "notes": "flash-class, JSON-clean"
+    },
+    {
+      "id": "llm-qwen3-4b-2507",
+      "kind": "inference_model",
+      "source": "Qwen/Qwen3-4B-Instruct-2507",
+      "api_name": null,
+      "modality": "text",
+      "industries": [
+        "general"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [
+        "str"
+      ],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:27:02.497045+00:00",
+      "notes": "fastest, cheapest planner option"
+    },
+    {
+      "id": "llm-llama-3-1-8b",
+      "kind": "inference_model",
+      "source": "meta-llama/Llama-3.1-8B-Instruct",
+      "api_name": null,
+      "modality": "text",
+      "industries": [
+        "general",
+        "game-dev"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [
+        "str"
+      ],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:27:03.361715+00:00",
+      "notes": "well-known instruct model"
+    },
+    {
+      "id": "llm-llama-3-3-70b",
+      "kind": "inference_model",
+      "source": "meta-llama/Llama-3.3-70B-Instruct",
+      "api_name": null,
+      "modality": "text",
+      "industries": [
+        "general",
+        "game-dev"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [
+        "str"
+      ],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:27:03.852053+00:00",
+      "notes": "largest llama available on the router"
+    },
+    {
+      "id": "llm-qwen3-8b",
+      "kind": "inference_model",
+      "source": "Qwen/Qwen3-8B",
+      "api_name": null,
+      "modality": "text",
+      "industries": [
+        "general"
+      ],
+      "license": "unknown",
+      "commercial_ok": false,
+      "inputs": {},
+      "outputs": [
+        "str"
+      ],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "error",
+      "runtime_error": "RuntimeError: empty completion",
+      "verified_at": "2026-09-14T22:27:04.273031+00:00",
+      "notes": "dense Qwen3"
+    },
+    {
+      "id": "llm-gemma-3-12b",
+      "kind": "inference_model",
+      "source": "google/gemma-3-12b-it",
+      "api_name": null,
+      "modality": "text",
+      "industries": [
+        "general",
+        "art"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [
+        "str"
+      ],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:27:04.796809+00:00",
+      "notes": "Gemma instruct"
+    },
+    {
+      "id": "llm-phi-4",
+      "kind": "inference_model",
+      "source": "microsoft/phi-4",
+      "api_name": null,
+      "modality": "text",
+      "industries": [
+        "general"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [
+        "str"
+      ],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:27:05.223799+00:00",
+      "notes": "small reasoning model"
+    },
+    {
+      "id": "llm-hermes-3-70b",
+      "kind": "inference_model",
+      "source": "NousResearch/Hermes-3-Llama-3.1-70B",
+      "api_name": null,
+      "modality": "text",
+      "industries": [
+        "general",
+        "game-dev"
+      ],
+      "license": "mit",
+      "commercial_ok": true,
+      "inputs": {},
+      "outputs": [
+        "str"
+      ],
+      "output_kind": "text",
+      "postprocess_hint": null,
+      "status": "running",
+      "runtime_error": null,
+      "verified_at": "2026-09-14T22:27:05.527718+00:00",
+      "notes": "Hermes - strong instruction following"
+    }
+  ],
+  "generated_at": "2026-09-14T22:31:44.366094+00:00"
+}

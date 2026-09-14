@@ -1,0 +1,35 @@
+=== Verifying 5 candidates ===
+
+[SPACE] black-forest-labs/FLUX.1-schnell  (expected api=/infer)
+Loaded as API: https://black-forest-labs-flux-1-schnell.hf.space
+  -> status=running  license=mit  commercial_ok=True
+  -> inputs={'prompt': 'str', 'seed': 'float', 'randomize_seed': 'bool', 'width': 'float', 'height': 'float', 'num_inference_steps': 'float'}
+  -> outputs=['dict(path: str | None (Path to a local file), url: str | None (Publicly available url or base64 encoded image), size: int | None (Size of image in bytes), orig_name: str | None (Original filename), mime_type: str | None (mime type of image), is_stream: bool (Can always be set to False), meta: dict(str, Any))', 'float']
+
+[SPACE] black-forest-labs/FLUX.1-dev  (expected api=/infer)
+Loaded as API: https://black-forest-labs-flux-1-dev.hf.space
+  -> status=running  license=mit  commercial_ok=True
+  -> inputs={'prompt': 'str', 'seed': 'float', 'randomize_seed': 'bool', 'width': 'float', 'height': 'float', 'guidance_scale': 'float', 'num_inference_steps': 'float'}
+  -> outputs=['dict(path: str | None (Path to a local file), url: str | None (Publicly available url or base64 encoded image), size: int | None (Size of image in bytes), orig_name: str | None (Original filename), mime_type: str | None (mime type of image), is_stream: bool (Can always be set to False), meta: dict(str, Any))', 'float']
+
+[SPACE] stabilityai/stable-diffusion-3.5-large  (expected api=/infer)
+Loaded as API: https://stabilityai-stable-diffusion-3-5-large.hf.space
+  -> status=running  license=other  commercial_ok=False
+  -> inputs={'prompt': 'str', 'negative_prompt': 'str', 'seed': 'float', 'randomize_seed': 'bool', 'width': 'float', 'height': 'float', 'guidance_scale': 'float', 'num_inference_steps': 'float'}
+  -> outputs=['filepath', 'float']
+
+[SPACE] hf-applications/Z-Image-Turbo  (expected api=/generate_image)
+Loaded as API: https://hf-applications-z-image-turbo.hf.space
+  -> status=running  license=unknown  commercial_ok=False
+  -> inputs={'prompt': 'str', 'height': 'float', 'width': 'float', 'seed': 'int'}
+  -> outputs=['dict(path: str | None (Path to a local file), url: str | None (Publicly available url or base64 encoded image), size: int | None (Size of image in bytes), orig_name: str | None (Original filename), mime_type: str | None (mime type of image), is_stream: bool (Can always be set to False), meta: dict(str, Any))', 'float']
+
+[SPACE] radames/Real-Time-Text-to-Image-SDXL-Lightning  (expected api=None)
+Loaded as API: https://radames-real-time-text-to-image-sdxl-lightning.hf.space
+  -> status=error  license=unknown  commercial_ok=False
+  -> ERROR: No callable endpoint found in view_api()
+
+=== DONE ===
+Verified bricks: 5
+Failed candidates logged: 0
+Output: /home/jonathan/dev/daggr-studio/daggrstudio/registry/spaces.json

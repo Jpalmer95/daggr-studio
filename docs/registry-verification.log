@@ -1,0 +1,324 @@
+[17:00:02] start: 5 bricks already in spaces.json
+[17:00:03]   ✓ flux1-schnell                /infer                 6 params -> image
+[17:00:04]   ✓ flux1-dev                    /infer                 7 params -> image
+[17:00:06]   ✓ sd35-large                   /infer                 8 params -> image
+[17:00:08]   ✓ z-image-turbo                /generate_image        4 params -> image
+[17:00:09]   ✓ kontext-dev                  /infer                 6 params -> image
+[17:00:11]   ✓ qwen-image-edit              /infer                 7 params -> image
+[17:00:13]   ✓ background-removal           /image                 1 params -> image
+[17:00:15]   ✗ not-lain-bg-removal          endpoints=['/image', '/png', '/text']
+[17:00:16]   ✗ bria-rmbg                    endpoints=['/image', '/text']
+[17:00:18]   ✗ swin2sr                      RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa86e7
+[17:00:19]   ✗ real-esrgan                  RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa86e7
+[17:00:21]   ✗ triposg                      endpoints=['/get_random_seed', '/image_to_3d', '/lambda']
+[17:00:23]   ✓ trellis2                     /image_to_3d           15 params -> model3d
+[17:00:25]   ✓ hunyuan3d-2                  /generation_all        13 params -> model3d
+[17:00:27]   ✓ hunyuan3d-21                 /generation_all        12 params -> model3d
+[17:00:28]   ✗ shap-e                       endpoints=['/False', '/image-to-3d', '/text-to-3d']
+[17:00:30]   ✗ wan21                        endpoints=['/i2v_generation_async', '/online_process_change', '/status_refresh']
+[17:00:32]   ✓ ltx2-distilled               /generate_video        8 params -> video
+[17:00:34]   ✓ edge-tts                     /tts_interface         4 params -> audio
+[17:00:35]   ✗ kokoro-tts                   Space exposes no named API endpoints (Use via API is unavailable)
+[17:00:37]   ✗ qwen3-tts                    ValueError: The current space is in the invalid state: RUNTIME_ERROR. 
+[17:00:38]   ✓ melo-tts                     /synthesize            4 params -> audio
+[17:00:40]   ✗ chatterbox                   endpoints=['/generate_tts_audio']
+[17:00:41]   ✗ ace-step                     RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa86e8
+[17:00:43]   ✗ musicgen                     endpoints=['/predict_batched']
+[17:00:44]   ✗ stable-audio                 RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa86e8
+[17:00:46]   ✓ moondream2                   /answer_question       2 params -> text
+[17:00:47]   ✗ qwen3-vl                     RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa86e8
+[17:00:48]   ✗ smolvlm                      RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa86e9
+[17:00:50]   ✓ en2fr-local                  /predict               1 params -> text
+[17:00:51]   ✗ image-caption-blip           ValueError: The current space is in the invalid state: BUILD_ERROR. Pl
+[17:00:53]   ✗ text-to-pokemon              RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa86e9
+[17:00:54]   ✗ depth-anything               endpoints=['/on_submit']
+[17:00:55] router serves 142 models
+[17:00:59]   ✓ llm-deepseek-v4-1-flash      router OK
+[17:01:01]   ✓ llm-deepseek-v3-2            router OK
+[17:01:05]   ✓ llm-glm-4-7-flash            router OK
+[17:01:06]   ✓ llm-qwen3-4b-2507            router OK
+[17:01:06]   ✓ llm-llama-3-1-8b             router OK
+[17:01:07]   ✓ llm-llama-3-3-70b            router OK
+[17:01:07]   ✗ llm-qwen3-8b                 RuntimeError: empty completion
+[17:01:08]   ✓ llm-gemma-3-12b              router OK
+[17:01:08]   ✓ llm-phi-4                    router OK
+[17:01:09]   ✓ llm-hermes-3-70b             router OK
+[17:01:09] done: 28 running / 48 total
+[17:10:19] start: 48 bricks already in spaces.json
+[17:10:19] discovery failed for 'music generation': TypeError
+[17:10:19] discovery failed for 'text to music': TypeError
+[17:10:19] discovery failed for 'audio generation': TypeError
+[17:10:19] discovery failed for 'image upscaler': TypeError
+[17:10:19] discovery failed for 'super resolution': TypeError
+[17:10:19] discovery failed for 'image captioning': TypeError
+[17:10:19] discovery failed for 'visual question answering': TypeError
+[17:10:19] discovery failed for 'image editing': TypeError
+[17:10:19] discovery failed for 'inpainting': TypeError
+[17:10:19] discovery failed for 'text to video': TypeError
+[17:10:19] discovery failed for 'depth estimation': TypeError
+[17:10:19] discovery failed for 'image to image': TypeError
+[17:10:19] discovery failed for 'text to speech': TypeError
+[17:10:19] discovery: 0 new candidates
+[17:10:19]   = flux1-schnell                already verified
+[17:10:19]   = flux1-dev                    already verified
+[17:10:19]   = sd35-large                   already verified
+[17:10:19]   = z-image-turbo                already verified
+[17:10:19]   = kontext-dev                  already verified
+[17:10:19]   = qwen-image-edit              already verified
+[17:10:19]   = background-removal           already verified
+[17:10:19]   = not-lain-bg-removal          failed recently, skipping
+[17:10:19]   = bria-rmbg                    failed recently, skipping
+[17:10:19]   = swin2sr                      failed recently, skipping
+[17:10:19]   = real-esrgan                  failed recently, skipping
+[17:10:19]   = triposg                      failed recently, skipping
+[17:10:19]   = trellis2                     already verified
+[17:10:19]   = hunyuan3d-2                  already verified
+[17:10:19]   = hunyuan3d-21                 already verified
+[17:10:19]   = shap-e                       failed recently, skipping
+[17:10:19]   = wan21                        failed recently, skipping
+[17:10:19]   = ltx2-distilled               already verified
+[17:10:19]   = edge-tts                     already verified
+[17:10:19]   = kokoro-tts                   failed recently, skipping
+[17:10:19]   = qwen3-tts                    failed recently, skipping
+[17:10:19]   = melo-tts                     already verified
+[17:10:19]   = chatterbox                   failed recently, skipping
+[17:10:19]   = ace-step                     failed recently, skipping
+[17:10:19]   = musicgen                     failed recently, skipping
+[17:10:19]   = stable-audio                 failed recently, skipping
+[17:10:19]   = moondream2                   already verified
+[17:10:19]   = qwen3-vl                     failed recently, skipping
+[17:10:19]   = smolvlm                      failed recently, skipping
+[17:10:19]   = en2fr-local                  already verified
+[17:10:19]   = image-caption-blip           failed recently, skipping
+[17:10:19]   = text-to-pokemon              failed recently, skipping
+[17:10:19]   = depth-anything               failed recently, skipping
+[17:10:19] router serves 141 models
+[17:10:19]   = llm-deepseek-v4-1-flash      already verified
+[17:10:19]   = llm-deepseek-v3-2            already verified
+[17:10:19]   = llm-glm-4-7-flash            already verified
+[17:10:19]   = llm-qwen3-4b-2507            already verified
+[17:10:19]   = llm-llama-3-1-8b             already verified
+[17:10:19]   = llm-llama-3-3-70b            already verified
+[17:10:20]   ✗ llm-qwen3-8b                 RuntimeError: empty completion
+[17:10:20]   = llm-gemma-3-12b              already verified
+[17:10:20]   = llm-phi-4                    already verified
+[17:10:20]   = llm-hermes-3-70b             already verified
+[17:10:20] done: 28 running / 48 total
+[17:13:29] start: 48 bricks already in spaces.json
+[17:13:29] discovery failed for 'music generation': TypeError
+[17:13:29] discovery failed for 'text to music': TypeError
+[17:13:29] discovery failed for 'audio generation': TypeError
+[17:13:29] discovery failed for 'image upscaler': TypeError
+[17:13:29] discovery failed for 'super resolution': TypeError
+[17:13:29] discovery failed for 'image captioning': TypeError
+[17:13:29] discovery failed for 'visual question answering': TypeError
+[17:13:29] discovery failed for 'image editing': TypeError
+[17:13:29] discovery failed for 'inpainting': TypeError
+[17:13:29] discovery failed for 'text to video': TypeError
+[17:13:29] discovery failed for 'depth estimation': TypeError
+[17:13:29] discovery failed for 'image to image': TypeError
+[17:13:29] discovery failed for 'text to speech': TypeError
+[17:13:29] discovery: 0 new candidates
+[17:13:30]   ✓ flux1-schnell                /infer                 6 params -> image pp=tuple_index:0
+[17:13:32]   ✓ flux1-dev                    /infer                 7 params -> image pp=tuple_index:0
+[17:13:33]   ✓ sd35-large                   /infer                 8 params -> image pp=tuple_index:0
+[17:13:35]   ✓ z-image-turbo                /generate_image        4 params -> image pp=tuple_index:0
+[17:13:37]   ✓ kontext-dev                  /infer                 6 params -> image pp=tuple_index:0
+[17:13:39]   ✓ qwen-image-edit              /infer                 7 params -> image pp=tuple_index:0
+[17:13:41]   ✓ background-removal           /image                 1 params -> image pp=tuple_index:1
+[17:13:43]   ✓ not-lain-bg-removal          /image                 1 params -> image
+[17:13:45]   ✓ bria-rmbg                    /image                 1 params -> image pp=tuple_index:0
+[17:13:46]   ✗ swin2sr                      RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa8719
+[17:13:48]   ✗ real-esrgan                  RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa8719
+[17:13:50]   ✓ triposg                      /image_to_3d           6 params -> model3d
+[17:13:51]   ✓ trellis2                     /image_to_3d           15 params -> model3d
+[17:13:53]   ✓ hunyuan3d-2                  /generation_all        13 params -> model3d pp=tuple_index:0
+[17:13:55]   ✓ hunyuan3d-21                 /generation_all        12 params -> model3d pp=tuple_index:0
+[17:13:57]   ✓ shap-e                       /image-to-3d           4 params -> model3d
+[17:13:58]   ✓ wan21                        /t2v_generation_async  4 params -> video pp=tuple_index:0
+[17:14:00]   ✓ ltx2-distilled               /generate_video        8 params -> video pp=tuple_index:0
+[17:14:02]   ✓ edge-tts                     /tts_interface         4 params -> audio pp=tuple_index:0
+[17:14:04]   ✗ kokoro-tts                   Space exposes no named API endpoints (Use via API is unavailable)
+[17:14:05]   ✗ qwen3-tts                    ValueError: The current space is in the invalid state: RUNTIME_ERROR. 
+[17:14:07]   ✓ melo-tts                     /synthesize            4 params -> audio
+[17:14:09]   ✓ chatterbox                   /generate_tts_audio    7 params -> audio
+[17:14:10]   ✗ ace-step                     RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa871b
+[17:14:12]   ✓ musicgen                     /predict_batched       2 params -> audio
+[17:14:13]   ✗ stable-audio                 RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa871b
+[17:14:15]   ✓ moondream2                   /answer_question       2 params -> text
+[17:14:16]   ✗ qwen3-vl                     RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa871b
+[17:14:17]   ✗ smolvlm                      RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa871b
+[17:14:19]   ✓ en2fr-local                  /predict               1 params -> text
+[17:14:21]   ✗ image-caption-blip           ValueError: The current space is in the invalid state: BUILD_ERROR. Pl
+[17:14:22]   ✗ text-to-pokemon              RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa871b
+[17:14:24]   ✗ depth-anything               endpoints=['/on_submit']
+[17:14:25] router serves 142 models
+[17:14:57]   ✓ llm-deepseek-v4-1-flash      router OK
+[17:14:58]   ✓ llm-deepseek-v3-2            router OK
+[17:14:59]   ✗ llm-glm-4-7-flash            RuntimeError: empty completion
+[17:15:00]   ✓ llm-qwen3-4b-2507            router OK
+[17:15:01]   ✓ llm-llama-3-1-8b             router OK
+[17:15:02]   ✓ llm-llama-3-3-70b            router OK
+[17:15:03]   ✗ llm-qwen3-8b                 RuntimeError: empty completion
+[17:15:03]   ✓ llm-gemma-3-12b              router OK
+[17:15:04]   ✓ llm-phi-4                    router OK
+[17:15:04]   ✓ llm-hermes-3-70b             router OK
+[17:15:04] done: 34 running / 48 total
+[17:17:20]   ~ dropping non-normalised entry black-forest-labs-flux.1-schnell
+[17:17:20]   ~ dropping non-normalised entry black-forest-labs-flux.1-dev
+[17:17:20]   ~ dropping non-normalised entry stabilityai-stable-diffusion-3.5-large
+[17:17:20]   ~ dropping non-normalised entry hf-applications-z-image-turbo-generate_image
+[17:17:20] start: 44 bricks already in spaces.json (4 stale dropped)
+[17:17:20]   ✓ flux1-schnell                /infer                 6 params -> image pp=tuple_index:0
+[17:17:22]   ✓ flux1-dev                    /infer                 7 params -> image pp=tuple_index:0
+[17:17:24]   ✓ sd35-large                   /infer                 8 params -> image pp=tuple_index:0
+[17:17:26]   ✓ z-image-turbo                /generate_image        4 params -> image pp=tuple_index:0
+[17:17:28]   ✓ kontext-dev                  /infer                 6 params -> image pp=tuple_index:0
+[17:17:29]   ✓ qwen-image-edit              /infer                 7 params -> image pp=tuple_index:0
+[17:17:31]   ✓ background-removal           /image                 1 params -> image pp=tuple_index:1
+[17:17:33]   ✓ not-lain-bg-removal          /image                 1 params -> image
+[17:17:35]   ✓ bria-rmbg                    /image                 1 params -> image pp=tuple_index:0
+[17:17:36]   ✗ swin2sr                      RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa8728
+[17:17:38]   ✗ real-esrgan                  RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa8728
+[17:17:39]   ✓ triposg                      /image_to_3d           6 params -> model3d
+[17:17:41]   ✓ trellis2                     /image_to_3d           15 params -> model3d
+[17:17:43]   ✓ hunyuan3d-2                  /generation_all        13 params -> model3d pp=tuple_index:0
+[17:17:45]   ✓ hunyuan3d-21                 /generation_all        12 params -> model3d pp=tuple_index:0
+[17:17:47]   ✓ shap-e                       /image-to-3d           4 params -> model3d
+[17:17:49]   ✗ wan21                        async endpoint returns ['number', 'number']
+[17:17:50]   ✓ ltx2-distilled               /generate_video        8 params -> video pp=tuple_index:0
+[17:17:52]   ✓ edge-tts                     /tts_interface         4 params -> audio pp=tuple_index:0
+[17:17:54]   ✗ kokoro-tts                   Space exposes no named API endpoints (Use via API is unavailable)
+[17:17:55]   ✗ qwen3-tts                    ValueError: The current space is in the invalid state: RUNTIME_ERROR. 
+[17:17:57]   ✓ melo-tts                     /synthesize            4 params -> audio
+[17:17:59]   ✓ chatterbox                   /generate_tts_audio    7 params -> audio
+[17:18:00]   ✗ ace-step                     RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa8729
+[17:18:02]   ✓ musicgen                     /predict_batched       2 params -> audio
+[17:18:03]   ✗ stable-audio                 RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa8729
+[17:18:05]   ✓ moondream2                   /answer_question       2 params -> text
+[17:18:06]   ✗ qwen3-vl                     RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa8729
+[17:18:07]   ✗ smolvlm                      RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa8729
+[17:18:09]   ✓ en2fr-local                  /predict               1 params -> text
+[17:18:10]   ✗ image-caption-blip           ValueError: The current space is in the invalid state: BUILD_ERROR. Pl
+[17:18:11]   ✗ text-to-pokemon              RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa872a
+[17:18:13]   ✗ depth-anything               endpoints=['/on_submit']
+[17:18:14] router serves 142 models
+[17:18:15]   ✓ llm-deepseek-v4-1-flash      router OK
+[17:18:17]   ✓ llm-deepseek-v3-2            router OK
+[17:18:23]   ✓ llm-glm-4-7-flash            router OK
+[17:18:24]   ✓ llm-qwen3-4b-2507            router OK
+[17:18:24]   ✓ llm-llama-3-1-8b             router OK
+[17:18:25]   ✓ llm-llama-3-3-70b            router OK
+[17:18:26]   ✗ llm-qwen3-8b                 RuntimeError: empty completion
+[17:18:26]   ✓ llm-gemma-3-12b              router OK
+[17:18:27]   ✓ llm-phi-4                    router OK
+[17:18:27]   ✓ llm-hermes-3-70b             router OK
+[17:18:27] done: 30 running / 44 total
+[17:25:35] start: 44 bricks already in spaces.json (0 stale dropped)
+[17:25:35] discovery failed for 'music generation': TypeError
+[17:25:35] discovery failed for 'text to music': TypeError
+[17:25:35] discovery failed for 'audio generation': TypeError
+[17:25:35] discovery failed for 'image upscaler': TypeError
+[17:25:35] discovery failed for 'super resolution': TypeError
+[17:25:35] discovery failed for 'image captioning': TypeError
+[17:25:35] discovery failed for 'visual question answering': TypeError
+[17:25:35] discovery failed for 'image editing': TypeError
+[17:25:35] discovery failed for 'inpainting': TypeError
+[17:25:35] discovery failed for 'text to video': TypeError
+[17:25:35] discovery failed for 'depth estimation': TypeError
+[17:25:35] discovery failed for 'image to image': TypeError
+[17:25:35] discovery failed for 'text to speech': TypeError
+[17:25:35] discovery: 0 new candidates
+[17:25:36]   ✓ flux1-schnell                /infer                 6 params -> image pp=tuple_index:0
+[17:25:37]       probe FAILED: AppError: The upstream Gradio app has raised an exception but has not enabled verbose erro
+[17:25:39]   ✓ flux1-dev                    /infer                 7 params -> image pp=tuple_index:0
+[17:25:44]       probe FAILED: AppError: TypeError
+[17:25:46]   ✓ sd35-large                   /infer                 8 params -> image pp=tuple_index:0
+[17:25:46]       probe skipped (probe skipped: unrecognised parameter requires a human)
+[17:25:48]   ✓ z-image-turbo                /generate_image        4 params -> image pp=tuple_index:0
+[17:25:49]       probe FAILED: AppError: Value 256 is less than minimum value 512.
+[17:25:50]   ✓ kontext-dev                  /infer                 6 params -> image pp=tuple_index:0
+[17:26:00]       probe OK in 9.3s
+[17:26:01]   ✓ qwen-image-edit              /infer                 7 params -> image pp=tuple_index:0
+[17:26:01]       probe skipped (probe skipped: unrecognised parameter requires a human)
+[17:26:03]   ✓ background-removal           /image                 1 params -> image pp=tuple_index:1
+[17:26:05]       probe FAILED: AppError: RuntimeError
+[17:26:07]   ✓ not-lain-bg-removal          /image                 1 params -> image
+[17:26:13]       probe OK in 5.7s
+[17:26:15]   ✓ bria-rmbg                    /image                 1 params -> image pp=tuple_index:0
+[17:26:16]       probe OK in 1.8s
+[17:26:18]   ✗ swin2sr                      RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa8748
+[17:26:19]   ✗ real-esrgan                  RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa8748
+[17:26:21]   ✓ triposg                      /image_to_3d           6 params -> model3d
+[17:26:22]   ✓ trellis2                     /image_to_3d           15 params -> model3d
+[17:26:24]   ✓ hunyuan3d-2                  /generation_all        13 params -> model3d pp=tuple_index:0
+[17:26:26]   ✓ hunyuan3d-21                 /generation_all        12 params -> model3d pp=tuple_index:0
+[17:26:28]   ✓ shap-e                       /image-to-3d           4 params -> model3d
+[17:26:29]   ✗ wan21                        async endpoint returns ['number', 'number']
+[17:26:31]   ✓ ltx2-distilled               /generate_video        8 params -> video pp=tuple_index:0
+[17:26:32]   ✓ edge-tts                     /tts_interface         4 params -> audio pp=tuple_index:0
+[17:26:33]       probe OK in 0.9s
+[17:26:35]   ✗ kokoro-tts                   Space exposes no named API endpoints (Use via API is unavailable)
+[17:26:36]   ✗ qwen3-tts                    ValueError: The current space is in the invalid state: RUNTIME_ERROR. 
+[17:26:38]   ✓ melo-tts                     /synthesize            4 params -> audio
+[17:26:38]       probe skipped (probe skipped: unrecognised parameter requires a human)
+[17:26:41]   ✓ chatterbox                   /generate_tts_audio    7 params -> audio
+[17:26:41]       probe skipped (probe skipped: unrecognised parameter requires a human)
+[17:26:42]   ✗ ace-step                     RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa874a
+[17:26:44]   ✓ musicgen                     /predict_batched       2 params -> audio
+[17:26:45]       probe FAILED: AppError: The upstream Gradio app has raised an exception but has not enabled verbose erro
+[17:26:46]   ✗ stable-audio                 RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa874a
+[17:26:47]   ✓ moondream2                   /answer_question       2 params -> text
+[17:26:48]       probe FAILED: AppError: The upstream Gradio app has raised an exception but has not enabled verbose erro
+[17:26:50]   ✗ qwen3-vl                     RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa874a
+[17:26:51]   ✗ smolvlm                      RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa874a
+[17:26:53]   ✓ en2fr-local                  /predict               1 params -> text
+[17:26:53]       probe OK in 0.9s
+[17:26:55]   ✗ image-caption-blip           ValueError: The current space is in the invalid state: BUILD_ERROR. Pl
+[17:26:56]   ✗ text-to-pokemon              RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-6aa874b
+[17:26:58]   ✗ depth-anything               endpoints=['/on_submit']
+[17:26:59] router serves 142 models
+[17:27:00]   ✓ llm-deepseek-v4-1-flash      router OK
+[17:27:01]   ✓ llm-deepseek-v3-2            router OK
+[17:27:02]   ✓ llm-glm-4-7-flash            router OK
+[17:27:03]   ✓ llm-qwen3-4b-2507            router OK
+[17:27:03]   ✓ llm-llama-3-1-8b             router OK
+[17:27:04]   ✓ llm-llama-3-3-70b            router OK
+[17:27:04]   ✗ llm-qwen3-8b                 RuntimeError: empty completion
+[17:27:05]   ✓ llm-gemma-3-12b              router OK
+[17:27:05]   ✓ llm-phi-4                    router OK
+[17:27:06]   ✓ llm-hermes-3-70b             router OK
+[17:27:06] done: 24 running / 44 total
+[17:29:06] start: 44 bricks already in spaces.json (0 stale dropped)
+[17:29:06]   ✓ flux1-schnell                /infer                 6 params -> image pp=tuple_index:0
+[17:29:11]       probe OK in 5.2s
+[17:29:13]   ✓ flux1-dev                    /infer                 7 params -> image pp=tuple_index:0
+[17:29:41]       probe OK in 27.6s
+[17:29:43]   ✓ sd35-large                   /infer                 8 params -> image pp=tuple_index:0
+[17:29:43]       probe skipped (probe declined: a required parameter has no safe value)
+[17:29:44]   ✓ z-image-turbo                /generate_image        4 params -> image pp=tuple_index:0
+[17:29:56]       probe OK in 11.1s
+[17:29:57]   ✓ kontext-dev                  /infer                 6 params -> image pp=tuple_index:0
+[17:30:31]       probe OK in 33.3s
+[17:30:32]   ✓ background-removal           /image                 1 params -> image pp=tuple_index:1
+[17:30:48]       probe FAILED: AppError: RuntimeError
+[17:30:50]   ✓ not-lain-bg-removal          /image                 1 params -> image
+[17:30:53]       probe OK in 3.2s
+[17:30:55]   ✓ bria-rmbg                    /image                 1 params -> image pp=tuple_index:0
+[17:30:57]       probe OK in 1.8s
+[17:30:58]   ✓ triposg                      /image_to_3d           6 params -> model3d
+[17:31:00]   ✓ trellis2                     /image_to_3d           15 params -> model3d
+[17:31:02]   ✓ hunyuan3d-2                  /generation_all        13 params -> model3d pp=tuple_index:0
+[17:31:04]   ✓ hunyuan3d-21                 /generation_all        12 params -> model3d pp=tuple_index:0
+[17:31:05]   ✓ shap-e                       /image-to-3d           4 params -> model3d
+[17:31:07]   ✗ wan21                        async endpoint returns ['number', 'number']
+[17:31:09]   ✓ ltx2-distilled               /generate_video        8 params -> video pp=tuple_index:0
+[17:31:10]   ✓ edge-tts                     /tts_interface         4 params -> audio pp=tuple_index:0
+[17:31:11]       probe OK in 0.9s
+[17:31:13]   ✓ melo-tts                     /synthesize            4 params -> audio
+[17:31:20]       probe OK in 6.6s
+[17:31:21]   ✓ musicgen                     /predict_batched       2 params -> audio
+[17:31:31]       probe FAILED: AppError: The upstream Gradio app has raised an exception but has not enabled verbose erro
+[17:31:34]   ✓ moondream2                   /answer_question       2 params -> text
+[17:31:44]       probe FAILED: AppError: The upstream Gradio app has raised an exception but has not enabled verbose erro
+[17:31:45] done: 27 running / 44 total
