@@ -540,3 +540,22 @@ def default_model() -> str:
     from daggrstudio.llm import DEFAULT_MODEL
 
     return DEFAULT_MODEL
+
+
+def pool_snapshot() -> dict[str, Any]:
+    """Community-pool state, safe to show in the UI (never contains a token)."""
+    from daggrstudio.llm import pool_status
+
+    try:
+        return pool_status()
+    except Exception:
+        return {"cap": 0, "used": 0, "remaining": 0, "date": ""}
+
+
+def verify_username(token: str | None) -> str | None:
+    """HF username for a token, or None when it is missing/invalid."""
+    if not token:
+        return None
+    from daggrstudio.llm import verify_token
+
+    return verify_token(token)

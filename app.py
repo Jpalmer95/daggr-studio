@@ -1,14 +1,13 @@
 """
 Daggr Studio — Space entrypoint.
 
-Two UIs, one process:
+The app itself is composed in `daggrstudio/web/studio.py` (custom frontend at `/`, JSON API at
+`/api/*`, the daggr canvas at `/canvas/`, the Gradio Builder at `/builder/`). This file only
+starts the server, because `gradio.Server.launch()` is the supported way to bring up a Server
+app (it wires Gradio's queue/routing on top of FastAPI).
 
-* ``/builder``  — the Gradio Builder (mounted first, so it wins over the canvas catch-all)
-* ``/``         — the daggr canvas, whose prebuilt frontend uses ABSOLUTE asset/API paths
-                  and therefore has to own the root
-
-Run locally with ``python app.py`` (uvicorn on :7860), or as an HF Space with
-``sdk: docker`` so we control the Python/gradio versions instead of inheriting them.
+Local:  python app.py          → http://localhost:7860
+Space:  sdk: docker, app_port 7860
 """
 
 from __future__ import annotations
@@ -17,149 +16,28 @@ import os
 import sys
 from pathlib import Path
 
-# make the package importable when running from the repo root (HF Spaces does this too)
 ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from fastapi import FastAPI, Request  # noqa: E402
-from fastapi.responses import JSONResponse  # noqa: E402
+from daggrstudio.web.studio import app  # noqa: E402  (import composes the whole app)
 
-from daggrstudio.web.canvas import CANVAS  # noqa: E402
-
-app = FastAPI(title="Daggr Studio")
-
-#: Exposed for HF Spaces and for uptime checks / the cron liveness job.
-_STARTED_AT = __import__("time").time()
+__all__ = ["app"]
 
 
-@app.get("/healthz")
-async def healthz():
-    from daggrstudio.registry.bricks import get_registry
-
-    registry = get_registry()
-    return JSONResponse({
-        "ok": True,
-        "canvas": CANVAS.status,
-        "canvas_ready": CANVAS.has_graph,
-        "canvas_error": CANVAS.error,
-        "registry": registry.summary(),
-        "uptime_s": round(__import__("time").time() - _STARTED_AT, 1),
-    })
-
-
-@app.get("/api/bricks")
-async def api_bricks(modality: str = "any", commercial_only: bool = True, limit: int = 60):
-    """Agent-friendly read of the brick catalogue (the same data the UI shows)."""
-    from daggrstudio.web import services
-
-    rows = services.bricks_table(modality=modality, only_commercial=commercial_only,
-                                 limit=limit)
-    return JSONResponse({"headers": services.BRICK_HEADERS, "rows": rows})
-
-
-@app.get("/api/leaderboard")
-async def api_leaderboard(modality: str = "any", industry: str = "any",
-                          license_filter: str = "commercial-only", sort: str = "votes"):
-    from daggrstudio.web import services
-
-    return JSONResponse(services.leaderboard_view(modality=modality, industry=industry,
-                                                  license_filter=license_filter, sort=sort))
-
-
-@app.get("/api/canvas")
-async def api_canvas():
-    """Which workflow the canvas is showing, plus any failure from the last attempt."""
-    return JSONResponse({"status": CANVAS.status, "ready": CANVAS.has_graph,
-                         "error": CANVAS.error})
-
-
-@app.post("/api/plan")
-async def api_plan(request: Request):
-    """
-    Agent entry point: intent -> healed workflow.
-
-    Body: {"intent": str, "industry": str, "license_posture": str, "max_steps": int,
-           "model": str, "token": str, "heal_rounds": int}
-    The token is optional and used only for this request (BYOK); without it the Space's own
-    token is metered against the community pool. Tokens are never logged or stored.
-    """
-    from daggrstudio.web import services
-
-    payload = await _json_body(request)
-    intent = str(payload.get("intent") or payload.get("prompt") or "").strip()
-    if not intent:
-        return JSONResponse({"ok": False, "message": "provide an 'intent'"}, status_code=400)
-    result = services.plan_workflow(
-        intent,
-        token=payload.get("token") or None,
-        model=payload.get("model") or None,
-        industry=str(payload.get("industry") or "general"),
-        license_posture=str(payload.get("license_posture") or "commercial-only"),
-        max_steps=int(payload.get("max_steps") or 4),
-        live_validation=bool(payload.get("live_validation", True)),
-        heal_rounds=int(payload.get("heal_rounds") or 4),
-    )
-    # never echo anything that could carry a credential
-    result.pop("pool", None)
-    # Only a workflow that actually validates gets shown on the canvas. Pushing an unhealed
-    # spec is how the canvas ended up failing to build while claiming to be ready.
-    if result.get("ok") and result.get("spec"):
-        from daggrstudio.web import services as svc
-        from daggrstudio.web.canvas import show_spec
-
-        spec = svc.as_spec(result["spec"])
-        if spec is not None:
-            result["canvas"] = show_spec(spec)
-    elif result.get("spec"):
-        result["canvas"] = "not pushed: the workflow still has blocking findings"
-    return JSONResponse(result, status_code=200 if result.get("ok") else 422)
-
-
-@app.post("/api/validate")
-async def api_validate(request: Request):
-    """Validate (and optionally heal) a spec posted by an agent."""
-    from daggrstudio.web import services
-
-    payload = await _json_body(request)
-    spec = payload.get("spec") or payload
-    if payload.get("heal"):
-        result = services.heal_spec(spec, token=payload.get("token") or None,
-                                    model=payload.get("model") or None,
-                                    live=bool(payload.get("live_validation", True)))
-    else:
-        result = services.validate_spec(spec, live=bool(payload.get("live_validation", True)),
-                                        token=payload.get("token") or None)
-    return JSONResponse(result, status_code=200 if result.get("ok") else 422)
-
-
-async def _json_body(request: Request) -> dict:
+def main() -> None:
+    port = int(os.environ.get("PORT") or os.environ.get("GRADIO_SERVER_PORT") or 7860)
+    # launch() blocks; it is Gradio's documented entrypoint for Server apps and registers
+    # the queue + /gradio_api routes that @app.api() endpoints rely on.
     try:
-        payload = await request.json()
-        return payload if isinstance(payload, dict) else {}
-    except Exception:
-        return {}
+        app.launch(server_name="0.0.0.0", server_port=port, show_error=True,
+                   quiet=False, _frontend=False)
+    except TypeError:
+        # older/newer Server signature: fall back to plain uvicorn so the Space still boots
+        import uvicorn
 
-
-def _compose():
-    """Mount the Builder at /builder, then the canvas (and everything else) at /."""
-    import gradio as gr
-
-    from daggrstudio.web.builder import build_ui
-
-    # Building the Blocks only defines the UI; nothing is served yet.
-    demo = build_ui()
-    composed = gr.mount_gradio_app(app, demo, path="/builder")
-    # Registered last on purpose: daggr's frontend is a catch-all SPA.
-    composed.mount("/", CANVAS)
-    return composed
-
-
-app = _compose()
+        uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
 
 
 if __name__ == "__main__":
-    import uvicorn
-
-    port = int(os.environ.get("PORT") or os.environ.get("GRADIO_SERVER_PORT") or 7860)
-    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
+    main()

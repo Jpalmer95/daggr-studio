@@ -64,15 +64,17 @@ def test_show_spec_clears_the_canvas_for_none():
 
 
 @pytest.mark.asyncio
-async def test_health_and_canvas_endpoints_expose_the_error_field():
+async def test_health_exposes_the_canvas_error_field():
+    """Readiness and the recorded error must both be visible from the outside."""
     import httpx
 
-    import app as studio
+    from daggrstudio.web.studio import app
 
-    transport = httpx.ASGITransport(app=studio.app)
-    async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),
+                                 base_url="http://test") as client:
         health = (await client.get("/healthz")).json()
-        canvas = (await client.get("/api/canvas")).json()
-    assert "canvas_error" in health
-    assert "error" in canvas
-    assert canvas["ready"] in (True, False)
+        rich = (await client.get("/api/health")).json()
+    for payload in (health, rich):
+        assert "canvas" in payload
+        assert "ready" in payload["canvas"]
+        assert "error" in payload["canvas"]

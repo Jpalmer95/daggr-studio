@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daggr Studio — assemble AI workflows from verified bricks</title>
+  <meta name="description" content="Describe a goal; get a validated, self-healing daggr workflow built from bricks that were proven to run.">
+  <link rel="stylesheet" href="/ui/styles.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><span class="brick">🧱</span> Daggr Studio <small id="brand-status"></small></div>
+    <nav class="tabs" role="tablist" id="tabs">
+      <button class="tab" role="tab" data-panel="build" aria-selected="true">Build</button>
+      <button class="tab" role="tab" data-panel="run">Run</button>
+      <button class="tab" role="tab" data-panel="code">Code</button>
+      <button class="tab" role="tab" data-panel="share">Share</button>
+      <button class="tab" role="tab" data-panel="bricks">Bricks</button>
+      <button class="tab" role="tab" data-panel="about">About</button>
+    </nav>
+    <div class="spacer"></div>
+    <span class="pill" id="pool-pill" title="Community pool: calls available without your own token">pool —</span>
+    <span class="pill" id="user-pill" title="Your Hugging Face identity">not signed in</span>
+    <a class="btn ghost" id="canvas-link" href="/canvas/" target="_blank" rel="noopener" title="Open the real daggr canvas (node-by-node inspection)">↗ Canvas</a>
+    <button class="btn ghost" id="settings-toggle">Settings</button>
+  </header>
+
+  <main>
+    <!-- ── settings ──────────────────────────────────────────────────── -->
+    <section class="card hidden" id="settings" style="margin-bottom:16px">
+      <h2>Settings</h2>
+      <p class="hint">Your token is used only for your own requests (planning, healing, publishing)
+        and is never stored on the server or written to logs. Without it you use the shared,
+        hard-capped community pool below.</p>
+      <div class="row">
+        <div>
+          <label for="token">Hugging Face token</label>
+          <input type="password" id="token" placeholder="hf_…" autocomplete="off">
+        </div>
+        <div style="flex:0 0 auto">
+          <label>&nbsp;</label>
+          <button class="btn" id="verify-token">Verify &amp; save locally</button>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="model">Planner / Medic model</label>
+          <input type="text" id="model" list="model-list" placeholder="deepseek-ai/DeepSeek-V4.1-Flash">
+          <datalist id="model-list"></datalist>
+        </div>
+        <div style="flex:0 0 auto">
+          <label>&nbsp;</label>
+          <button class="btn ghost" id="clear-token">Forget token</button>
+        </div>
+      </div>
+      <p class="hint" id="token-status" style="margin-top:10px"></p>
+    </section>
+
+    <!-- ── build ─────────────────────────────────────────────────────── -->
+    <section class="panel" data-panel="build" data-active="true">
+      <div class="grid sidebar">
+        <div>
+          <div class="card">
+            <h2>1 · Describe the goal</h2>
+            <p class="hint">Plain language. Daggr Studio picks bricks, wires them, validates against
+              the live Space APIs and repairs what is broken.</p>
+            <textarea id="intent" placeholder="e.g. turn a one-line character idea into a game sprite with a transparent background, commercially usable"></textarea>
+            <label>…or start from an example</label>
+            <div class="chips" id="examples"></div>
+
+            <div class="row">
+              <div>
+                <label for="industry">Industry</label>
+                <select id="industry">
+                  <option>general</option><option>game-dev</option><option>music-production</option>
+                  <option>art</option><option>3d</option><option>film</option><option>marketing</option>
+                </select>
+              </div>
+              <div>
+                <label for="license">Licence posture</label>
+                <select id="license">
+                  <option value="commercial-only">commercial-only</option>
+                  <option value="any">any (allow non-commercial)</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label for="max-steps">Max bricks: <span id="max-steps-out">4</span></label>
+                <input type="range" id="max-steps" min="2" max="8" value="4" step="1">
+              </div>
+              <div>
+                <label for="live-check">Live validation</label>
+                <select id="live-check">
+                  <option value="1">on (slower, catches real breakage)</option>
+                  <option value="0">off (fast, offline)</option>
+                </select>
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn primary" id="plan">🩺 Plan, validate &amp; heal</button>
+              <button class="btn" id="new">New</button>
+              <button class="btn ghost" id="import-btn">Import JSON…</button>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:16px">
+            <h2>Repair log</h2>
+            <p class="hint">Every change the Medic made, and why. Nothing is repaired silently.</p>
+            <div class="log" id="timeline">No workflow yet.</div>
+          </div>
+
+          <div class="card" style="margin-top:16px">
+            <h2>Validation findings</h2>
+            <p class="hint">Blocking findings must be zero before a workflow can run or be shared.</p>
+            <div class="table-wrap"><table id="issues-table">
+              <thead><tr><th></th><th>code</th><th>step</th><th>what</th><th>suggested fix</th></tr></thead>
+              <tbody><tr><td colspan="5" class="mono-sm">—</td></tr></tbody>
+            </table></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <h2>Workflow</h2>
+            <p class="hint" id="workflow-hint">Nothing built yet — describe a goal on the left.</p>
+            <div id="summary"></div>
+            <div class="pipeline" id="pipeline"></div>
+            <div class="btn-row">
+              <button class="btn" id="revalidate">Re-validate</button>
+              <button class="btn" id="heal">Heal again</button>
+              <button class="btn" id="check">🔍 Re-check these bricks live</button>
+              <button class="btn ghost" id="advise">✨ Suggest upgrades</button>
+            </div>
+            <div class="log" id="action-log" style="margin-top:14px; display:none"></div>
+            <div id="suggestions" style="margin-top:12px"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── run ───────────────────────────────────────────────────────── -->
+    <section class="panel" data-panel="run">
+      <div class="grid two">
+        <div class="card">
+          <h2>Inputs</h2>
+          <p class="hint">Rendered from the workflow itself — exactly the fields it declares.</p>
+          <div id="run-inputs" class="row tight"></div>
+          <div class="btn-row">
+            <button class="btn primary" id="run">▶ Run workflow</button>
+            <button class="btn ghost" id="run-stop" disabled>Stop</button>
+          </div>
+          <p class="hint" style="margin-top:10px">Runs the real Spaces in order; a sleeping brick can
+            take a minute on its first call. Repairs appear inline.</p>
+        </div>
+        <div class="card">
+          <h2>Live log</h2>
+          <div class="log" id="run-log">Idle.</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h2>Artifacts</h2>
+        <p class="hint">Everything the run produced, served straight from this Space.</p>
+        <div class="artifacts" id="artifacts"><span class="mono-sm">Nothing yet.</span></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h2>Step results</h2>
+        <div class="table-wrap"><table id="step-table">
+          <thead><tr><th></th><th>step</th><th>time</th><th>brick</th><th>repairs / error</th></tr></thead>
+          <tbody><tr><td colspan="5" class="mono-sm">—</td></tr></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ── code ──────────────────────────────────────────────────────── -->
+    <section class="panel" data-panel="code">
+      <div class="card">
+        <h2>app.py — real daggr code</h2>
+        <p class="hint">Deterministic codegen: no model wrote this. The file that ran here is the file
+          you download. <code>pip install daggr &amp;&amp; daggr app.py</code> runs it locally.</p>
+        <div class="btn-row">
+          <button class="btn" id="download-code">⤓ Download app.py</button>
+          <button class="btn" id="copy-code">Copy</button>
+          <button class="btn" id="download-spec">⤓ Download workflow JSON</button>
+          <button class="btn ghost" id="deploy">🚀 Deploy as my own Space</button>
+        </div>
+        <div id="deploy-status" class="hint" style="margin-top:10px"></div>
+        <pre class="code" id="code-view">Build a workflow to see its code.</pre>
+      </div>
+    </section>
+
+    <!-- ── share ─────────────────────────────────────────────────────── -->
+    <section class="panel" data-panel="share">
+      <div class="grid two">
+        <div class="card">
+          <h2>Publish this workflow</h2>
+          <p class="hint">Commits your workflow to a public Hugging Face Dataset — auditable, forkable,
+            no server involved. Metadata is shared under CC-BY-4.0; the assets your workflow produces
+            keep the licence you chose.</p>
+          <label for="publish-note">Note (optional)</label>
+          <input type="text" id="publish-note" placeholder="e.g. sprite pipeline for my roguelike">
+          <div class="btn-row">
+            <button class="btn primary" id="publish">⬆ Publish to leaderboard</button>
+            <button class="btn ghost" id="load-recent">↻ Refresh list</button>
+          </div>
+          <div class="log" id="share-status" style="margin-top:12px">Not published yet.</div>
+        </div>
+        <div class="card">
+          <h2>Load a workflow</h2>
+          <p class="hint">Pick one from the community leaderboard, or paste a spec.</p>
+          <label for="load-slug">Workflow</label>
+          <select id="load-slug"></select>
+          <div class="btn-row">
+            <button class="btn" id="load">Load</button>
+            <button class="btn ghost" id="vote-up">👍 Vote</button>
+            <button class="btn ghost" id="vote-down">👎</button>
+          </div>
+          <div class="log" id="load-status" style="margin-top:12px">—</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h2>Community leaderboard</h2>
+        <div class="filters">
+          <div><label for="lb-modality">Modality</label><select id="lb-modality"></select></div>
+          <div><label for="lb-industry">Industry</label><select id="lb-industry"></select></div>
+          <div><label for="lb-license">Licence</label>
+            <select id="lb-license">
+              <option value="commercial-only">commercial-only</option>
+              <option value="any">any</option>
+            </select>
+          </div>
+          <div><label for="lb-tier">Compute</label>
+            <select id="lb-tier"><option value="any">any</option>
+              <option value="cloud-free">cloud-free</option><option value="cloud-paid">cloud-paid</option>
+            </select>
+          </div>
+          <div><label for="lb-sort">Sort</label>
+            <select id="lb-sort"><option>votes</option><option>recent</option>
+              <option>steps</option><option>name</option></select>
+          </div>
+          <div style="flex:0 0 auto"><label>&nbsp;</label><button class="btn" id="lb-refresh">🔄 Refresh</button></div>
+        </div>
+        <div id="lb-summary" class="hint"></div>
+        <div class="table-wrap" style="margin-top:10px"><table id="lb-table">
+          <thead><tr><th>workflow</th><th>author</th><th>industry</th><th>bricks</th><th>steps</th>
+            <th>votes</th><th>licence</th><th>published</th></tr></thead>
+          <tbody><tr><td colspan="8" class="mono-sm">—</td></tr></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ── bricks ────────────────────────────────────────────────────── -->
+    <section class="panel" data-panel="bricks">
+      <div class="card">
+        <h2>The brick registry</h2>
+        <p class="hint">Every brick was introspected against its live API; <strong>proven</strong> means
+          we made a real call and it produced output. Dead spaces stay listed so the Medic can fail
+          over instead of retrying forever.</p>
+        <div class="filters">
+          <div><label for="b-modality">Modality</label><select id="b-modality"></select></div>
+          <div><label for="b-commercial">Commercial only</label>
+            <select id="b-commercial"><option value="1">yes</option><option value="0">no</option></select>
+          </div>
+          <div><label for="b-reachable">Reachable only</label>
+            <select id="b-reachable"><option value="0">no</option><option value="1">yes</option></select>
+          </div>
+          <div style="flex:0 0 auto"><label>&nbsp;</label><button class="btn" id="b-refresh">🔄 Refresh</button></div>
+        </div>
+        <div id="b-summary" class="hint"></div>
+        <div class="table-wrap" style="margin-top:10px"><table id="brick-table">
+          <thead><tr><th>id</th><th>source</th><th>modality</th><th>outputs</th><th>licence</th>
+            <th>commercial</th><th>status</th><th>probe</th><th>industries</th><th>notes</th></tr></thead>
+          <tbody><tr><td colspan="10" class="mono-sm">—</td></tr></tbody>
+        </table></div>
+        <div class="btn-row">
+          <button class="btn" id="verify-bricks">⚡ Re-verify the bricks in this workflow (live calls)</button>
+        </div>
+        <div class="log" id="verify-status" style="margin-top:12px; display:none"></div>
+      </div>
+    </section>
+
+    <!-- ── about ─────────────────────────────────────────────────────── -->
+    <section class="panel" data-panel="about">
+      <div class="card">
+        <h2>What this is</h2>
+        <p>Daggr Studio turns a described goal into a running
+          <a href="https://github.com/gradio-app/daggr" target="_blank" rel="noopener">daggr</a>
+          workflow assembled from bricks that were verified — introspected against their live API,
+          and for cheap modalities actually executed — before being offered to you.</p>
+        <ul>
+          <li><strong>Plan</strong> — a small model (default <code>deepseek-ai/DeepSeek-V4.1-Flash</code>)
+            chooses bricks; it can only pick ids from the catalogue, and endpoints/params are filled
+            in from the registry, never invented.</li>
+          <li><strong>Validate</strong> — every endpoint and parameter is checked against the live
+            Space. Findings carry stable codes.</li>
+          <li><strong>Heal</strong> — deterministic repairs first (renamed parameters, dead Spaces,
+            non-commercial swaps), then a model that may only emit ops from a closed vocabulary;
+            rejected ops are reported with reasons.</li>
+          <li><strong>Run</strong> — executed in-process with daggr's own executor, node by node,
+            with repairs at run time (sleeping → retry, quota → your token, changed API → remap,
+            deleted → fail over).</li>
+          <li><strong>Share</strong> — published as a commit to a public dataset; leaderboard filtered
+            by modality, industry, licence and compute.</li>
+        </ul>
+        <p class="hint">No LLM writes the generated code: the spec is model-authored, <code>app.py</code>
+          is deterministic codegen, so what you run here is what you download.</p>
+        <div class="btn-row">
+          <a class="btn" href="/docs" target="_blank" rel="noopener">API docs</a>
+          <a class="btn" href="/canvas/" target="_blank" rel="noopener">Open the daggr canvas</a>
+          <a class="btn" href="/builder/" target="_blank" rel="noopener">Gradio builder (fallback UI)</a>
+          <a class="btn" href="https://github.com/Jpalmer95/daggr-studio" target="_blank" rel="noopener">Source</a>
+          <a class="btn" href="https://huggingface.co/datasets/jkorstad/daggr-studio-workflows" target="_blank" rel="noopener">Workflow dataset</a>
+        </div>
+        <p class="hint" id="about-health" style="margin-top:14px"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="legal">
+    Daggr Studio · MIT · bricks are third-party Spaces and models — their licences are shown
+    everywhere they appear and checked against your licence posture before a workflow can run.
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+<script type="module" src="/ui/app.js"></script>
+</body>
+</html>

@@ -1,104 +1,86 @@
-"""The composed app: routes must not collide, and the agent API must degrade safely.
+"""Entrypoint: the Space boots from app.py, which composes the Studio app.
 
-These run against the real ASGI app in-process (no ports), which is exactly how the Space
-serves it in production.
+The interesting surface tests live in tests/test_studio.py; this file guards the things that
+only matter at process start (import order, port selection, and that the entrypoint really
+exposes a servable app).
 """
 
 from __future__ import annotations
 
-import json
+import importlib
+import os
+import sys
 
-import httpx
 import pytest
 
-import app as studio
-from tests.conftest import concept_spec
+
+def test_entrypoint_exposes_a_servable_app():
+    import app as entry
+
+    assert hasattr(entry, "app")
+    assert callable(entry.main)
+    # gradio.Server *is* a FastAPI/ASGI app - that is the whole reason we can compose it
+    assert callable(entry.app)
+    assert hasattr(entry.app, "mount") and hasattr(entry.app, "include_router")
 
 
-def client() -> httpx.AsyncClient:
-    return httpx.AsyncClient(transport=httpx.ASGITransport(app=studio.app),
-                             base_url="http://test")
+def test_main_reads_the_port_from_the_environment(monkeypatch):
+    import app as entry
+
+    captured: dict[str, object] = {}
+
+    class FakeApp:
+        def launch(self, **kwargs):
+            captured.update(kwargs)
+            return ("app", "url", "share")
+
+    monkeypatch.setattr(entry, "app", FakeApp())
+    monkeypatch.setenv("PORT", "9999")
+    entry.main()
+    assert captured["server_port"] == 9999
+    assert captured["server_name"] == "0.0.0.0"
 
 
-@pytest.mark.asyncio
-async def test_health_reports_the_registry_and_canvas_state():
-    async with client() as c:
-        resp = await c.get("/healthz")
-    assert resp.status_code == 200
-    payload = resp.json()
-    assert payload["ok"] is True
-    assert "bricks" in payload["registry"]
-    assert payload["canvas_ready"] in (True, False)
+def test_main_defaults_to_the_space_port(monkeypatch):
+    import app as entry
+
+    captured: dict[str, object] = {}
+
+    class FakeApp:
+        def launch(self, **kwargs):
+            captured.update(kwargs)
+
+    monkeypatch.setattr(entry, "app", FakeApp())
+    monkeypatch.delenv("PORT", raising=False)
+    monkeypatch.delenv("GRADIO_SERVER_PORT", raising=False)
+    entry.main()
+    assert captured["server_port"] == 7860
 
 
-@pytest.mark.asyncio
-async def test_builder_and_canvas_both_serve_html_from_one_process():
-    """The whole reason for the ASGI shim: daggr's absolute paths vs a mounted Builder."""
-    async with client() as c:
-        builder = await c.get("/builder")
-        canvas = await c.get("/")
-    assert builder.status_code == 200 and "<!DOCTYPE html>" in builder.text
-    assert canvas.status_code == 200 and "<!DOCTYPE html>" in canvas.text
-    # the canvas page always offers a way back to the Builder
-    assert "/builder" in canvas.text
+def test_entrypoint_is_importable_from_a_clean_interpreter_syspath(tmp_path):
+    """The Space runs `python app.py` from the repo root; the package must import from there."""
+    import subprocess
 
-
-@pytest.mark.asyncio
-async def test_canvas_api_is_honest_before_a_workflow_exists():
-    async with client() as c:
-        resp = await c.get("/api/graph")
-    assert resp.status_code == 404
-    assert "no workflow built yet" in resp.json()["error"]
-
-
-@pytest.mark.asyncio
-async def test_brick_and_leaderboard_endpoints_are_agent_readable():
-    async with client() as c:
-        bricks = await c.get("/api/bricks?limit=3")
-        leaderboard = await c.get("/api/leaderboard")
-        canvas = await c.get("/api/canvas")
-    assert bricks.status_code == 200
-    payload = bricks.json()
-    assert payload["headers"][0] == "id" and len(payload["rows"]) <= 3
-    assert leaderboard.status_code == 200 and "stats" in leaderboard.json()
-    assert "status" in canvas.json()
-
-
-@pytest.mark.asyncio
-async def test_agent_plan_endpoint_requires_an_intent():
-    async with client() as c:
-        resp = await c.post("/api/plan", json={"industry": "art"})
-    assert resp.status_code == 400
-    assert "intent" in resp.json()["message"]
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    result = subprocess.run(
+        [sys.executable, "-c", "import app; print(type(app.app).__name__)"],
+        cwd=root, capture_output=True, text=True, timeout=180,
+        env={**os.environ, "GRADIO_ANALYTICS_ENABLED": "False"},
+    )
+    assert result.returncode == 0, result.stderr[-2000:]
+    assert "Server" in result.stdout or "FastAPI" in result.stdout
 
 
 @pytest.mark.asyncio
-async def test_agent_validate_endpoint_accepts_a_spec_and_reports_findings():
-    spec = concept_spec().to_dict()
-    async with client() as c:
-        resp = await c.post("/api/validate", json={"spec": spec, "live_validation": False})
-    payload = resp.json()
-    assert resp.status_code in (200, 422)
-    assert "issues" in payload and "message" in payload
-    assert isinstance(payload["issues"], list)
+async def test_the_studio_routes_are_mounted_in_order():
+    """Cheap structural guard: the four surfaces exist and do not shadow each other."""
+    import httpx
 
+    from daggrstudio.web.studio import app
 
-@pytest.mark.asyncio
-async def test_agent_endpoints_never_echo_a_token():
-    async with client() as c:
-        resp = await c.post("/api/validate",
-                            json={"spec": concept_spec().to_dict(), "token": "hf_not_a_real_token",
-                                  "live_validation": False})
-    assert "hf_not_a_real_token" not in resp.text
-    assert "hf_not_a_real_token" not in json.dumps(resp.json())
-
-
-@pytest.mark.asyncio
-async def test_agent_validate_with_heal_can_be_requested_in_one_call():
-    spec = concept_spec().to_dict()
-    async with client() as c:
-        resp = await c.post("/api/validate",
-                            json={"spec": spec, "heal": True, "live_validation": False})
-    payload = resp.json()
-    assert "timeline" in payload and "report" not in payload  # heal returns a timeline
-    assert payload.get("spec")  # a healed spec comes back for the caller to use
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),
+                                 base_url="http://t") as c:
+        assert (await c.get("/")).status_code == 200          # SPA owns the root
+        assert (await c.get("/api/health")).status_code == 200  # API under its own prefix
+        assert (await c.get("/builder")).status_code == 307     # explicit redirect
+        assert (await c.get("/builder/")).status_code == 200    # Gradio behind it
