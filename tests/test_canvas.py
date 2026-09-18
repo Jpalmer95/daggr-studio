@@ -78,3 +78,33 @@ async def test_health_exposes_the_canvas_error_field():
         assert "canvas" in payload
         assert "ready" in payload["canvas"]
         assert "error" in payload["canvas"]
+
+def test_publish_to_canvas_is_the_shared_entry_point():
+    """
+    Planning, healing, loading and upgrades all route through services.publish_to_canvas, so
+    the canvas always shows the workflow the user is looking at. Regression: the SPA-era
+    rewrite briefly dropped this, leaving /canvas/ permanently empty.
+    """
+    from daggrstudio.spec import Binding, Step, WorkflowSpec
+    from daggrstudio.web import services
+
+    # a network-free spec (local helper only) so this test never touches the Hub
+    spec = WorkflowSpec(name="Local only", steps=[
+        Step(id="report", kind="fn", fn="json_report",
+             inputs={"payload": Binding(value="hi")},
+             outputs={"report": {"component": "json", "label": "Report"}}),
+    ])
+    status = services.publish_to_canvas(spec)
+    assert "canvas shows" in status and "Local only" in status
+
+    from daggrstudio.web.canvas import CANVAS
+
+    assert CANVAS.has_graph is True and CANVAS.error is None
+
+
+def test_publish_to_canvas_reports_failure_instead_of_raising():
+    """A canvas problem must never break the thing that builds workflows."""
+    from daggrstudio.web import services
+
+    # None is not a workflow: the helper answers, it does not explode
+    assert services.publish_to_canvas(None) == "nothing to show"

@@ -54,9 +54,9 @@ _EMPTY_PAGE = """<!DOCTYPE html>
   <p>This is the daggr canvas. It shows the workflow you build in the Studio — with every
      step's output, so you can inspect and re-run individual bricks.</p>
   <p>{body}</p>
-  <a class="cta" href="/builder">Open the Builder</a>
-  <p class="muted">No workflow loaded yet. Describe what you want in the Builder and the
-     canvas will be rebuilt around it.</p>
+  <a class="cta" href="/">Open Daggr Studio</a>
+  <p class="muted">No workflow loaded yet. Describe what you want in Daggr Studio and this
+     canvas is rebuilt around it.</p>
 </div></body></html>
 """
 

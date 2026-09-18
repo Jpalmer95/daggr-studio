@@ -180,6 +180,8 @@ def plan_workflow(
         "summary": spec_summary(spec),
         "pool": pool_status(),
     })
+    out["canvas"] = (publish_to_canvas(spec) if healed.healed
+                     else "not pushed: the workflow still has blocking findings")
     return out
 
 
@@ -200,7 +202,7 @@ def heal_spec(payload: Any, token: str | None = None, model: str | None = None,
     client = LLMClient(token=token, model=model)
     result = heal(spec, registry=get_registry(), client=client, token=token, live=live,
                   model=model)
-    return {
+    out = {
         "ok": result.healed,
         "status": result.status,
         "spec": result.spec.to_dict(),
@@ -211,6 +213,9 @@ def heal_spec(payload: Any, token: str | None = None, model: str | None = None,
         "message": result.note or result.report.summary(),
         "model": result.model,
     }
+    out["canvas"] = (publish_to_canvas(result.spec) if result.healed
+                     else "not pushed: still blocking after healing")
+    return out
 
 
 def render_code(payload: Any) -> str:
@@ -272,7 +277,8 @@ def load_workflow(slug: str, token: str | None = None) -> dict[str, Any]:
     if spec is None:
         return {"ok": False, "message": "that entry does not contain a usable workflow"}
     return {"ok": True, "message": result.message, "spec": spec.to_dict(),
-            "code": render_app_py(spec, get_registry()), "summary": spec_summary(spec)}
+            "code": render_app_py(spec, get_registry()), "summary": spec_summary(spec),
+            "canvas": publish_to_canvas(spec)}
 
 
 def leaderboard_view(modality: str = "any", industry: str = "any",
@@ -411,7 +417,7 @@ def apply_upgrade(payload: Any, brick_id: str = "", step_id: str = "",
         return {"ok": False, "message": "that upgrade was rejected (unknown brick or step)"}
     return {"ok": True, "message": f"switched `{step_id}` to `{brick_id}`",
             "spec": updated.to_dict(), "code": render_app_py(updated, get_registry()),
-            "summary": spec_summary(updated)}
+            "summary": spec_summary(updated), "canvas": publish_to_canvas(updated)}
 
 
 # ─── settings / info ──────────────────────────────────────────────────────────
@@ -505,6 +511,24 @@ Licence posture: `{spec.license_posture}`. Run locally with `pip install daggr &
                            f"live in a minute or two (build logs there if it misbehaves)"}
     except Exception as exc:
         return {"ok": False, "message": f"deploy failed: {type(exc).__name__}: {str(exc)[:200]}"}
+
+
+
+def publish_to_canvas(spec: Any) -> str:
+    """
+    Push a workflow to the daggr canvas (the visual view at /canvas/).
+
+    Lives here rather than in any one caller so the REST API, the queued Gradio endpoints and
+    the legacy Builder all agree on what the canvas is showing. A canvas failure is reported,
+    never raised: it must not be able to break the thing that actually builds workflows.
+    """
+    try:
+        from daggrstudio.web.canvas import show_spec
+
+        parsed = as_spec(spec)
+        return show_spec(parsed) if parsed is not None else "nothing to show"
+    except Exception as exc:
+        return f"canvas unavailable: {type(exc).__name__}: {exc}"
 
 
 def export_spec_json(payload: Any) -> str:
