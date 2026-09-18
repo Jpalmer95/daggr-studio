@@ -137,6 +137,36 @@ Found by checking `/healthz` on the *deployed* Space rather than trusting the lo
 Lesson: exercise the deployed artifact, not just the local one - both bugs were invisible
 locally (where the canvas was never left in a broken state) and obvious in production.
 
+### v2: custom frontend on gradio.Server (2026-09-17)
+
+Trigger: the "Builder" button on the canvas appeared to do nothing. Root cause was **routing, not
+the button**: daggr's canvas owned `/` with an SPA catch-all, so `GET /builder` returned the canvas
+HTML (989 B, no Gradio) and the click looked like a page reload.
+
+Chosen architecture — `gradio.Server`, i.e. any custom frontend with Gradio's backend:
+
+* `/` is now our own single-page app (vanilla ES modules; no build step, so the Space ships what
+  is in the repo). Capabilities the old Gradio UI could not express: NDJSON-streamed planning and
+  execution, per-step pipeline view with inline repairs, artifact previews, repair timeline,
+  upgrade advisor, keyboard shortcuts, per-browser state restore.
+* `/api/*` JSON + NDJSON, shared by the UI, agents and the queued `@app.api()` endpoints.
+  Queued endpoints are **token-free by design**: queued calls can land in Gradio's run history.
+  Artifacts are served by opaque id, so the Space cannot be used to read arbitrary paths.
+* `/canvas/` the real daggr canvas via `PrefixProxy` (path stripping + response rewriting).
+* `/builder/` the Gradio Builder, kept as a fallback; `/builder` 307-redirects (regression-tested).
+
+Lessons that only a real browser could teach (all now pinned by tests):
+
+1. **Response rewriting cannot fix runtime-built URLs.** daggr composes its socket URL from
+   `window.location.host`, so the canvas page now ships a shim wrapping `WebSocket`/`fetch`.
+2. **Compare host, not origin.** The first shim compared `parsed.origin` to `location.origin`;
+   a `wss://` URL has scheme `wss` on an `https` page, so every socket URL was skipped and the
+   canvas sat at "Connecting…" forever. Curl, unit tests and the HTTP surface all looked fine.
+3. **Inject markup once.** The back-link existed in both the canvas shim and the proxy, producing
+   a duplicated button on the real page.
+4. **Canvas publication belongs in the service layer.** The SPA rewrite briefly dropped it, and
+   `/canvas/` stayed permanently empty because nothing pushed there any more.
+
 ### Build failures hit and fixed (worth remembering)
 
 * `gradio==6.27.0` + `gradio_client==2.5.0` is unresolvable (gradio 6.27 pins

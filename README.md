@@ -20,9 +20,9 @@ Daggr Studio turns "make me a game sprite with a transparent background" into a 
 runnable daggr pipeline. Everything it assembles comes from a registry of Spaces and models
 that were **introspected *and* executed** during verification — never guessed.
 
-> The Builder lives at **`/builder`**. The daggr canvas (every step's output, re-runnable
-> node by node) lives at **`/`** — the root belongs to the canvas because daggr's frontend
-> uses absolute asset paths.
+> The Studio lives at **`/`**. The real daggr canvas — every step's output, re-runnable node by
+> node — lives at **`/canvas/`** (behind a prefix proxy, because daggr's frontend uses absolute
+> asset paths). The original Gradio Builder is still at **`/builder/`**.
 
 ## What it actually does
 
@@ -97,6 +97,31 @@ to commercially usable workflows only.
 Workflow *metadata* is shared under CC-BY-4.0. The assets your workflow produces keep the
 licence posture you chose — Daggr Studio never relicenses your output.
 
+## Architecture
+
+One Space, one process, five surfaces — built on **`gradio.Server`** (Gradio ≥ 6), i.e. a custom
+frontend with Gradio's backend (queue, streaming, MCP, `gradio_client`, Spaces hosting):
+
+| Path | What | Why there |
+|---|---|---|
+| `/` | the Studio (custom single-page frontend: HTML/CSS/vanilla ES modules, no build step) | the front door; nothing about the UI is constrained by Gradio components |
+| `/api/*` | JSON + NDJSON endpoints (`plan`, `plan/stream`, `validate`, `heal`, `run/stream`, `check`, `advise`, `publish`, `load`, `vote`, `bricks`, `deploy`, `registry/verify`, `artifact/<id>`) | one code path shared by the UI, `curl` agents and the queued endpoints |
+| queued | `@app.api()` endpoints: `plan_workflow`, `validate_workflow`, `registry_summary` | callable from `gradio_client`/MCP like any Gradio app — deliberately **token-free**, because queued calls can appear in run history |
+| `/canvas/` | the real daggr canvas (node-by-node inspection, re-run individual bricks) | it needs the prefix proxy (below) |
+| `/builder/` | the original Gradio Builder | kept as a fallback surface |
+
+### Why the canvas needs a proxy
+
+daggr's prebuilt frontend requests `/assets/…`, `/theme.css`, `/api/…`, `/ws/…` and `/file/…`
+as **absolute** paths. `PrefixProxy` (`daggrstudio/web/proxy.py`) strips `/canvas` on the way in
+and rewrites those references on the way out — for HTML/JS/CSS only, never JSON or binary.
+
+One thing rewriting **cannot** fix: daggr builds its websocket URL at runtime from
+`window.location.host`. So the canvas page also receives a small shim that wraps
+`WebSocket`/`fetch`/`EventSource` for same-origin requests. Two bugs lived here, both invisible
+server-side and obvious in a browser: the shim compared `origin` (a `wss://` URL has scheme
+`wss` on an `https` page, so nothing was ever prefixed), and the back-link was injected twice.
+
 ## Also useful without the UI
 
 ```bash
@@ -110,14 +135,26 @@ curl -X POST https://jkorstad-daggr-studio.hf.space/api/plan \
   -H 'content-type: application/json' \
   -d '{"intent":"3D model of a game character from text","industry":"game-dev","max_steps":3}'
 
+# streaming variant: NDJSON progress (stage events, then the full result)
+curl -N -X POST https://jkorstad-daggr-studio.hf.space/api/plan/stream \
+  -H 'content-type: application/json' -d '{"intent":"narrate a product blurb"}'
+
+# run a workflow, streaming per-step events as each brick executes
+curl -N -X POST https://jkorstad-daggr-studio.hf.space/api/run/stream \
+  -H 'content-type: application/json' -d '{"spec":{...},"values":{"prompt":"a red cube"}}'
+
 # validate / heal a spec you already have
 curl -X POST https://jkorstad-daggr-studio.hf.space/api/validate \
-  -H 'content-type: application/json' -d '{"spec":{...},"heal":true}'
+  -H 'content-type: application/json' -d '{"spec":{...},"live_validation":false}'
+curl -X POST https://jkorstad-daggr-studio.hf.space/api/heal \
+  -H 'content-type: application/json' -d '{"spec":{...}}'
 ```
 
-The Gradio widget API lives at `/builder/gradio_api` (the Builder is mounted under a prefix by
-necessity), so point `gradio_client` at `https://<space>.hf.space/builder/` if you want to drive
-the UI programmatically. The REST endpoints above are the friendlier route for agents.
+Interactive OpenAPI docs: `/docs`. The queued endpoints are also reachable through
+`gradio_client`, e.g. `Client("jkorstad/daggr-studio").predict(intent="...", api_name="/plan_workflow")`.
+
+Artifacts produced by a run are served as `/api/artifact/<opaque-id>` — never by path, so there
+is no way to use this Space to read arbitrary files.
 
 ## Development
 
