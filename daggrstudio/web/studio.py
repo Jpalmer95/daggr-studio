@@ -147,7 +147,10 @@ def _runtime_prefix_patch() -> str:
     if (typeof url !== "string") return url;
     try {
       var parsed = new URL(url, window.location.origin);
-      if (parsed.origin !== window.location.origin) return url;
+      // Compare HOST, not origin: a wss:// socket URL has scheme "wss" while the page is
+      // "https", so an origin comparison silently skips every websocket (found the hard way:
+      // the ciphertext of a bug that only a real browser shows).
+      if (parsed.host !== window.location.host) return url;
       if (parsed.pathname.indexOf(PREFIX + "/") === 0) return url;
       for (var i = 0; i < ROOTS.length; i++) {
         if (parsed.pathname.indexOf(ROOTS[i]) === 0) {

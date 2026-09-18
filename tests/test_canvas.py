@@ -124,3 +124,28 @@ def test_canvas_injection_is_single_and_includes_the_runtime_prefix_patch():
     assert "window.WebSocket = PatchedWS" in markup        # runtime socket patch installed
     assert 'PREFIX = "/canvas"' in markup
     assert "window.__daggrCanvasPrefix" in markup
+
+
+def test_runtime_patch_compares_host_not_origin():
+    """
+    Regression: a wss:// URL has scheme "wss" on an https page, so comparing `parsed.origin`
+    to `location.origin` skipped every websocket and the canvas sat at "Connecting…" forever.
+    Pinned here because no server-side test could see it - it only happens in a browser.
+    """
+    from daggrstudio.web.studio import _runtime_prefix_patch
+
+    patch = _runtime_prefix_patch()
+    assert "parsed.host !== window.location.host" in patch
+    assert "parsed.origin !== window.location.origin" not in patch
+    # and it must cover the transports daggr actually uses
+    for transport in ("window.WebSocket", "window.fetch", "window.EventSource"):
+        assert transport in patch
+
+
+def test_runtime_patch_rewrites_the_paths_daggr_uses():
+    """The patched URL set must cover sockets, api calls and file fetches."""
+    from daggrstudio.web.studio import _runtime_prefix_patch
+
+    patch = _runtime_prefix_patch()
+    for root in ("/ws/", "/api/", "/file/"):
+        assert root in patch, root
