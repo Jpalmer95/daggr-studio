@@ -194,7 +194,9 @@ class CanvasRouter:
             f'color:#a5b4fc;background:rgba(15,15,25,.75);padding:6px 12px;border-radius:999px">'
             f'built with Daggr Studio{" · " + name if name else ""}</div>'
         ) if name else ""
-        injection = banner + BUILDER_BUTTON
+        # NOTE: the back-link is injected by the proxy (it knows the path prefix); injecting it
+        # here as well produced a duplicated button on the real canvas.
+        injection = banner
         if "</body>" in page:
             return page.replace("</body>", injection + "</body>", 1)
         return page + injection

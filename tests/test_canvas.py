@@ -108,3 +108,19 @@ def test_publish_to_canvas_reports_failure_instead_of_raising():
 
     # None is not a workflow: the helper answers, it does not explode
     assert services.publish_to_canvas(None) == "nothing to show"
+
+
+def test_canvas_injection_is_single_and_includes_the_runtime_prefix_patch():
+    """
+    Two things broke on the real Space that only a served page can show:
+    the back-link was injected twice (shim + proxy), and daggr builds its websocket URL at
+    runtime from window.location.host, which response rewriting cannot fix - hence the shim.
+    """
+    from daggrstudio.web.studio import _canvas_injection
+
+    markup = _canvas_injection()
+    assert markup.count("href=\"/\"") == 1                 # exactly one way back to the Studio
+    assert "Daggr Studio Builder" not in markup            # old label gone
+    assert "window.WebSocket = PatchedWS" in markup        # runtime socket patch installed
+    assert 'PREFIX = "/canvas"' in markup
+    assert "window.__daggrCanvasPrefix" in markup

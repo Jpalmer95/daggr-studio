@@ -122,9 +122,74 @@ def _index_html() -> str:
 
 
 def _canvas_injection() -> str:
-    """Injected into daggr's canvas page: a link back to the Studio and its ownership note."""
-    return BUILDER_BUTTON.replace('href="/builder"', 'href="/"').replace(
+    """
+    Markup injected into daggr's canvas page: a link back to the Studio, plus a runtime patch
+    that makes the canvas sub-path-safe.
+
+    The patch exists because daggr builds its websocket URL at runtime from
+    ``window.location.host`` (```${proto}//${host}/ws/${id}```). No amount of response
+    rewriting can fix a URL that does not exist until the page runs, so we wrap
+    ``WebSocket`` (and ``fetch``/``EventSource``) to add the prefix for same-origin requests.
+    """
+    link = BUILDER_BUTTON.replace('href="/builder"', 'href="/"').replace(
         "Daggr Studio Builder", "← Daggr Studio")
+    return link + _runtime_prefix_patch()
+
+
+def _runtime_prefix_patch() -> str:
+    """A small, defensive shim: same-origin /ws, /api, /file URLs get the canvas prefix."""
+    return """
+<script>
+(function () {
+  var PREFIX = "/canvas";
+  var ROOTS = ["/ws/", "/api/", "/file/", "/daggr-assets/", "/assets/"];
+  function fix(url) {
+    if (typeof url !== "string") return url;
+    try {
+      var parsed = new URL(url, window.location.origin);
+      if (parsed.origin !== window.location.origin) return url;
+      if (parsed.pathname.indexOf(PREFIX + "/") === 0) return url;
+      for (var i = 0; i < ROOTS.length; i++) {
+        if (parsed.pathname.indexOf(ROOTS[i]) === 0) {
+          parsed.pathname = PREFIX + parsed.pathname;
+          return parsed.toString();
+        }
+      }
+    } catch (err) { /* leave unusual URLs alone */ }
+    return url;
+  }
+  var NativeWS = window.WebSocket;
+  function PatchedWS(url, protocols) {
+    var target = fix(String(url));
+    return protocols === undefined ? new NativeWS(target) : new NativeWS(target, protocols);
+  }
+  PatchedWS.prototype = NativeWS.prototype;
+  ["CONNECTING", "OPEN", "CLOSING", "CLOSED"].forEach(function (k) {
+    try { PatchedWS[k] = NativeWS[k]; } catch (err) {}
+  });
+  window.WebSocket = PatchedWS;
+
+  var nativeFetch = window.fetch;
+  window.fetch = function (input, init) {
+    if (typeof input === "string") input = fix(input);
+    else if (input && input.url) {
+      var rewritten = fix(input.url);
+      if (rewritten !== input.url) input = new Request(rewritten, input);
+    }
+    return nativeFetch.call(this, input, init);
+  };
+
+  if (window.EventSource) {
+    var NativeES = window.EventSource;
+    window.EventSource = function (url, config) {
+      return new NativeES(fix(String(url)), config);
+    };
+    window.EventSource.prototype = NativeES.prototype;
+  }
+  window.__daggrCanvasPrefix = PREFIX;
+})();
+</script>
+"""
 
 
 def _register_queued_endpoints(app) -> None:
